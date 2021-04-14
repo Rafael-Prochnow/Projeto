@@ -1,11 +1,14 @@
 import pandas as pd
 import re
+from datetime import datetime
+import dataframe_image as dfi
 import matplotlib.pyplot as plt
 import seaborn as sns
-from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos, posse_de_bola, juntar_posses, \
-    acrescentar_indicadores, par_impar, periodo_potencial, identificardor_periodo_positivo
+from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo, resultado_da_posse_de_bola,\
+    juntar_posses, acrescentar_indicadores, par_impar, periodo_potencial, identificardor_periodo_positivo, \
+    acrescentar_valores_gerais, criando_dataframe_times, criando_analise_avancada_times
 
-arquivo = "tabela_16_Corinthians_x_Paulistano.csv"
+arquivo = "tabela_11_Brasília_x_Flamengo.csv"
 df = pd.read_csv(arquivo)
 
 expressao_regular = re.findall(r'[A-Z].*?[.]', arquivo)
@@ -13,7 +16,6 @@ expressao_regular = str(expressao_regular).strip('[]')
 expressao_regular0 = expressao_regular.split('_x_')
 
 # criar um df que identifique o Mogi e colocar mogi das cruzes
-
 casa = expressao_regular0[0]
 nome_time_casa = casa.replace("'", "")
 fora = expressao_regular0[1]
@@ -26,6 +28,8 @@ casa = 'casa'
 fora = 'fora'
 classificatoria = '1 Turno'
 temporada = 2019
+data_hoje = datetime.today().strftime('%d/%m/%Y')
+dia_do_jogo = '02/01/2021'
 
 # Limpeza dos dados
 df = limpeza_tempo(df)
@@ -53,7 +57,7 @@ pontuacao = pontuacao[::-1]
 pontuacao.reset_index(drop=True, inplace=True)
 
 # colocar a separação dos quartos nos gráficos
-quartos = quartos(df)
+quartos = quartos_do_jogo(df)
 
 '''plt.style.use('seaborn')
 sns.set_style('white')
@@ -84,7 +88,7 @@ posse_bola = posse_bola[::-1]
 posse_bola.reset_index(drop=True, inplace=True)
 
 # Formula que descobre a posse de bola de cada time
-df_time_a, df_time_b = posse_de_bola(posse_bola, sigla_time_a, sigla_time_b)
+df_time_a, df_time_b = resultado_da_posse_de_bola(posse_bola, sigla_time_a, sigla_time_b)
 
 # Formula que junta as posses de bolas de cada time
 posse_de_bola = juntar_posses(df_time_a, df_time_b)
@@ -279,29 +283,29 @@ if segunda_posse == sigla_time_a:
         if i[0] == 0:
             positivo_inicio_time_b.append(posse_bola_um.loc[i[0], 'Tempo_Fim'])
             positivo_fim_time_b.append(posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento_dois.append([posse_bola_um.loc[i[0], 'Tempo_Fim'],posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
+            segmento_dois.append([posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
         else:
             positivo_inicio_time_b.append(posse_bola_um.loc[i[0]-1, 'Tempo_Fim'])
             positivo_fim_time_b.append(posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento_dois.append([posse_bola_um.loc[i[0]-1, 'Tempo_Fim'],posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
-    print('Time B')
-    print(positivo_inicio_time_b)
-    print(positivo_fim_time_b)
+            segmento_dois.append([posse_bola_um.loc[i[0]-1, 'Tempo_Fim'], posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
+    # print('Time B')
+    # print(positivo_inicio_time_b)
+    # print(positivo_fim_time_b)
 else:
     positivo_inicio_time_a = []
-    positivo_fim_time_a =  []
+    positivo_fim_time_a = []
     for i in periodo_positivo:
         if i[0] == 0:
             positivo_inicio_time_a.append(posse_bola_um.loc[i[0], 'Tempo_Fim'])
             positivo_fim_time_a.append(posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento.append([posse_bola_um.loc[i[0], 'Tempo_Fim'],posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
+            segmento.append([posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
         else:
             positivo_inicio_time_a.append(posse_bola_um.loc[i[0]-1, 'Tempo_Fim'])
             positivo_fim_time_a.append(posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento.append([posse_bola_um.loc[i[0]-1, 'Tempo_Fim'],posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
-    print('Time A')
-    print(positivo_inicio_time_a)
-    print(positivo_fim_time_a)
+            segmento.append([posse_bola_um.loc[i[0]-1, 'Tempo_Fim'], posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
+    # print('Time A')
+    # print(positivo_inicio_time_a)
+    # print(positivo_fim_time_a)
 
 # 2 o time que teve a segunda posse de bola
 posse_bola_dois = posse_de_bola.copy()
@@ -331,33 +335,36 @@ if segunda_posse_dois == sigla_time_a:
         if i[0] == 0:
             positivo_inicio_time_b.append(posse_bola_um.loc[i[0], 'Tempo_Fim'])
             positivo_fim_time_b.append(posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento_dois.append([posse_bola_um.loc[i[0], 'Tempo_Fim'],posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
+            segmento_dois.append([posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
         else:
             positivo_inicio_time_b.append(posse_bola_dois.loc[i[0]-1, 'Tempo_Fim'])
             positivo_fim_time_b.append(posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento_dois.append([posse_bola_dois.loc[i[0]-1, 'Tempo_Fim'],posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
-    print('Time B')
-    print(positivo_inicio_time_b)
-    print(positivo_fim_time_b)
+            segmento_dois.append([posse_bola_dois.loc[i[0]-1, 'Tempo_Fim'], posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
+    # print('Time B')
+    # print(positivo_inicio_time_b)
+    # print(positivo_fim_time_b)
 else:
     positivo_inicio_time_a = []
-    positivo_fim_time_a =  []
+    positivo_fim_time_a = []
     for i in periodo_positivo_dois:
         if i[0] == 0:
             positivo_inicio_time_a.append(posse_bola_um.loc[i[0], 'Tempo_Fim'])
             positivo_fim_time_a.append(posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento.append([posse_bola_um.loc[i[0], 'Tempo_Fim'],posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
+            segmento.append([posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
         else:
             positivo_inicio_time_a.append(posse_bola_dois.loc[i[0]-1, 'Tempo_Fim'])
             positivo_fim_time_a.append(posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento.append([posse_bola_dois.loc[i[0]-1, 'Tempo_Fim'],posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
-    print('Time A')
-    print(positivo_inicio_time_a)
-    print(positivo_fim_time_a)
+            segmento.append([posse_bola_dois.loc[i[0]-1, 'Tempo_Fim'], posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
+    # print('Time A')
+    # print(positivo_inicio_time_a)
+    # print(positivo_fim_time_a)
 
-# GRÁFICO
+
 # Time A
 del segmento[0]
+
+
+'''# GRÁFICO
 plt.style.use('seaborn')
 sns.set_style('white')
 plt.figure(figsize=(11, 5))
@@ -377,11 +384,12 @@ for i in segmento:
 for x in quartos:
     plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
 plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
-plt.show()
+plt.show()'''
 
 # Time B
 del segmento_dois[0]
 
+'''# GRÁFICO
 plt.style.use('seaborn')
 sns.set_style('white')
 plt.figure(figsize=(11, 5))
@@ -401,4 +409,118 @@ for i in segmento_dois:
 for x in quartos:
     plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
 plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
-plt.show()
+plt.show()'''
+
+print('Time A')
+print(len(segmento))
+print('Time B')
+print(len(segmento_dois))
+
+###################################################################################################################
+# Tabela de dados gerais
+Tabela_Geral = df[['Time', 'Indicador', 'Nome']]
+Tabela_Geral_Time1 = Tabela_Geral[Tabela_Geral['Time'] == sigla_time_a]
+Tabela_Geral_Time2 = Tabela_Geral[Tabela_Geral['Time'] == sigla_time_b]
+
+# Esses indicadores podem não aparecer no jogo
+# dessa maneira eu vou criar um if e acrescentar
+
+tabela_time1_pivot = acrescentar_valores_gerais(Tabela_Geral_Time1, nome_time_casa, nome_time_fora,
+                                                dia_do_jogo, casa, classificatoria)
+# print(tabela_time1_pivot)
+
+tabela_time2_pivot = acrescentar_valores_gerais(Tabela_Geral_Time2, nome_time_fora, nome_time_casa,
+                                                dia_do_jogo, fora, classificatoria)
+
+# criar um novo data frame e agregar a soma
+Time1_Final = criando_dataframe_times(tabela_time1_pivot, nome_time_casa)
+
+Time2_Final = criando_dataframe_times(tabela_time2_pivot, nome_time_fora)
+
+# Somar tudo para ter o resultado da equipe
+resultado_Time1 = Time1_Final.sum()
+resultado_Time2 = Time2_Final.sum()
+resultado_Time1['Nome'] = 'Equipe'
+resultado_Time2['Nome'] = 'Equipe'
+resultado_Time1['Time'] = nome_time_casa
+resultado_Time2['Time'] = nome_time_fora
+resultado_Time1['Oponente'] = nome_time_fora
+resultado_Time2['Oponente'] = nome_time_casa
+resultado_Time1['Data'] = dia_do_jogo
+resultado_Time2['Data'] = dia_do_jogo
+resultado_Time1['Casa/Fora'] = casa
+resultado_Time2['Casa/Fora'] = fora
+resultado_Time1['Classificatoria/Playoffs'] = classificatoria
+resultado_Time2['Classificatoria/Playoffs'] = classificatoria
+# agregar no dataframe final
+Time1_Final = Time1_Final.append(resultado_Time1, ignore_index=True)
+Time2_Final = Time2_Final.append(resultado_Time2, ignore_index=True)
+
+# esse código é para a criação dos gráficos de comparação
+tabela_times = pd.concat([Time1_Final[Time1_Final['Nome'] == 'Equipe'],
+                          Time2_Final[Time2_Final['Nome'] == 'Equipe']], ignore_index=True)
+
+# Acrescentar a diferença do placar e vitória derrota
+dif_placar_geral = tabela_times['Pts_C'].diff()
+# acrescenta a diferença do placar do times
+positivo = []
+negativo = []
+resul_dif = []
+op_1 = ['vitória', 'derrota']
+op_2 = ['derrota', 'vitória']
+tamanho_df_pivot = len(Time1_Final)
+tamanho_df_pivot0 = len(Time2_Final)
+if dif_placar_geral[1] <= 0:
+    positivo = abs(dif_placar_geral[1])
+    negativo = dif_placar_geral[1]
+    resul_dif = [positivo, negativo]
+    tabela_times['Diferenca_Placar'] = resul_dif
+    tabela_times['Vitoria/Derrota'] = op_1
+    ################################################
+    vit_der = ['vitória' for itens in range(tamanho_df_pivot)]
+    Time1_Final['Vitoria/Derrota'] = vit_der
+    dif = [positivo for itens in range(tamanho_df_pivot)]
+    Time1_Final['Diferenca_Placar'] = dif
+    #########################################################
+    vit_der0 = ['derrota' for itens in range(tamanho_df_pivot0)]
+    Time2_Final['Vitoria/Derrota'] = vit_der0
+    dif0 = [negativo for itens in range(tamanho_df_pivot0)]
+    Time2_Final['Diferenca_Placar'] = dif0
+else:
+    positivo = dif_placar_geral[1]
+    negativo = -(dif_placar_geral[1])
+    resul_dif = [negativo, positivo]
+    tabela_times['Diferenca_Placar'] = resul_dif
+    tabela_times['Vitoria/Derrota'] = op_2
+    ################################################
+    vit_der = ['derrota' for itens in range(tamanho_df_pivot)]
+    Time1_Final['Vitoria/Derrota'] = vit_der
+    dif = [negativo for itens in range(tamanho_df_pivot)]
+    Time1_Final['Diferenca_Placar'] = dif
+    #########################################################
+    vit_der0 = ['vitória' for itens in range(tamanho_df_pivot0)]
+    Time2_Final['Vitoria/Derrota'] = vit_der0
+    dif0 = [positivo for itens in range(tamanho_df_pivot0)]
+    Time2_Final['Diferenca_Placar'] = dif0
+
+Tabela_Final = pd.concat([Time1_Final, Time2_Final]).reset_index(drop=True)
+# Acrescentar o valor de preriodos posítivo e negativo
+tabela_times['Periodos_Positivos'] = [len(segmento),
+                                      len(segmento_dois)]
+tabela_times['posse_de_bola'] = [contagem['posse'][0],
+                                 contagem['posse'][1]]
+
+tabela_times['Ataques/min'] = [contagem['Ataques/min'][0],
+                               contagem['Ataques/min'][1]]
+
+tabela_times['Tempo_de_posse'] = [contagem['Tempo_de_posse'][0],
+                                  contagem['Tempo_de_posse'][1]]
+
+tabela_times.to_csv('ex.csv')
+##################################################################################################################
+'''
+# Análise Avançada
+analise = criando_analise_avancada_times(Tabela_Final)
+##################################################################################################################
+'''
+
