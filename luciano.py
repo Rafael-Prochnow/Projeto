@@ -5,285 +5,195 @@ import datetime as dt
 from datetime import datetime
 import re
 
-
-def siglas(nome_time):
-    if nome_time == 'Bauru':
-        return 'BAU'
-
-    elif nome_time == 'MOGI1':
-        return 'MOG'
-
-    elif nome_time == 'VipTech CMB':
-        return 'CMO'
-
-    elif nome_time == 'Brasília':
-        return 'BRA'
-
-    elif nome_time == 'Paulistano':
-        return 'CAP'
-
-    elif nome_time == 'Flamengo':
-        return 'FLA'
-
-    elif nome_time == 'Minas':
-        return 'MIN'
-
-    elif nome_time == 'UNIFACISA':
-        return 'UFC'
-
-    elif nome_time == 'Cerrado':
-        return 'CER'
-
-    elif nome_time == 'SESI Franca':
-        return 'FRA'
-
-    elif nome_time == 'Corinthians':
-        return 'COR'
-
-    elif nome_time == 'Pinheiros':
-        return 'PIN'
-
-    elif nome_time == 'Fortaleza B. C':
-        return 'FOR'
-
-    elif nome_time == 'KTO Caxias do Sul':
-        return 'CAX'
-
-    elif nome_time == 'Pato':
-        return 'PAT'
-
-    elif nome_time == 'São Paulo':
-        return 'SPF'
-
-
-# path = r'C:\Users\Elen- PC\Jupyter\teste'
-
-
-'''files = os.listdir(path)
-df = pd.DataFrame()
-nome_time_casa = 'Bauru'
-nome_time_fora = 'Corinthians'
+path = r'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 2020'
+files = os.listdir(path)
+df_posse = pd.DataFrame()
 
 files_csv = [path + '\\' + f for f in files if f[-3:] == 'csv']
-
-for f in files_csv:
-    data = pd.read_csv(f)
-    df = df.append(data)'''
-
-
-arquivo = "tabela_1_Flamengo_x_Brasília.csv"
-df = pd.read_csv(f'C:/Users/Elen- PC/Jupyter/teste/{arquivo}')
-
-expressao_regular = re.findall(r'[A-Z].*?[.]', arquivo)
-expressao_regular = str(expressao_regular).strip('[]')
-expressao_regular0 = expressao_regular.split('_x_')
-casa = expressao_regular0[0]
+'''
+data = pd.read_csv(files_csv[14])
+arquivo_time = files_csv[15].replace('C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 2020', '')
+arquivo_time = arquivo_time.replace('. C.', '')
+print(arquivo_time)
+expressao_regular = re.findall(r'[A-Z].*?[.]', arquivo_time)[0]
+print(expressao_regular)
+expressao_regular = expressao_regular.replace('.', '')
+expressao_regular1 = expressao_regular.split('_x_')
+casa = expressao_regular1[0]
 nome_time_casa = casa.replace("'", "")
-
-fora = expressao_regular0[1]
+fora = expressao_regular1[1]
 nome_time_fora = fora.replace(".'", "")
 
-data_hoje = datetime.today().strftime('%d/%m/%Y')
-dia_do_jogo = '02/01/2021'
-temporada = 2019
-sigla_time_a = siglas(nome_time_casa)
-sigla_time_b = siglas(nome_time_fora)
-casa = 'casa'
-fora = 'fora'
-classificatoria = '1 Turno'
+'''
+'''aaa = 1
+for f in files_csv:
+    print(aaa)
+    aaa += 1
+    #print(f)
+    df = pd.read_csv(f)
+    arquivo_time = f.replace('C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 2020', '')
+    arquivo_time = arquivo_time.replace('. C.', '')
+    expressao_regular = re.findall(r'[A-Z].*?[.]', arquivo_time)[0]
+    expressao_regular = expressao_regular.replace('.', '')
+    expressao_regular1 = expressao_regular.split('_x_')
+    casa = expressao_regular1[0]
+    nome_time_casa = casa.replace("'", "")
+    print(nome_time_casa)
+    fora = expressao_regular1[1]
+    nome_time_fora = fora.replace(".'", "")
+    print(nome_time_fora)
+    data_hoje = datetime.today().strftime('%d/%m/%Y')
+    dia_do_jogo = '02/01/2021'
+    temporada = 2019
+    sigla_time_a = siglas(nome_time_casa)
+    sigla_time_b = siglas(nome_time_fora)
+    casa = 'casa'
+    fora = 'fora'
+    classificatoria = '1 Turno'
 
-df.dropna(subset=['Tempo'], inplace=True)
+    df.dropna(subset=['Tempo'], inplace=True)
 
-# Lipeza dos dados de tempo
-mudar_hora = []
-for x in df['Tempo']:
-    if re.findall(r'..:..', x):
-        mudar_hora.append(x)
-    else:
-        if re.findall(r'....', x):
-            x = x[0:2] + ':' + x[2:4]
+    # Lipeza dos dados de tempo
+    mudar_hora = []
+    for x in df['Tempo']:
+        if re.findall(r'..:..', x):
             mudar_hora.append(x)
-        elif re.findall(r'...', x):
-            x = '0' + x[0] + ':' + x[1:3]
-            mudar_hora.append(x)
-        elif re.findall(r'..', x):
-            x = '00:' + x
-            mudar_hora.append(x)
-        elif re.findall(r'.', x):
-            x = '00:0' + x
-            mudar_hora.append(x)
-
-df['Tempo_2'] = mudar_hora
-df.drop('Tempo', axis=1, inplace=True)
-df['Tempo_2'] = df['Tempo_2'].apply(lambda x: dt.datetime.strptime(x, '%M:%S'))
-df['Tempo_2'] = df['Tempo_2'].apply(lambda x: dt.time(x.hour, x.minute, x.second))
-df['Tempo_2'] = df['Tempo_2'].apply(lambda x: (x.hour * 60 + x.minute) * 60 + x.second)
-# transforma os dados para números inteiros
-df['Quarto'] = df['Quarto'].apply(lambda l: int(l))
-
-# modificar o tempo decrescente para crescente (* -1)
-# acrescentar o tempo de cada quarto (primeiro quarto termina em 600s, o segundo quarto 2*600 = 1200 ...)
-tempo_novo = []
-for x, y in zip(df['Quarto'], df['Tempo_2']):
-    if x == 1:
-        a = (y - (600 * 1)) * -1
-        tempo_novo.append(a)
-    elif x == 2:
-        a = (y - (600 * 2)) * -1
-        tempo_novo.append(a)
-    elif x == 3:
-        a = (y - (600 * 3)) * -1
-        tempo_novo.append(a)
-    elif x == 4:
-        a = (y - (600 * 4)) * -1
-        tempo_novo.append(a)
-    elif x == 5:
-        a = (y - (600 * 4.5)) * -1
-        tempo_novo.append(a)
-    elif x == 6:
-        a = (y - (600 * 5)) * -1
-        tempo_novo.append(a)
-    elif x == 7:
-        a = (y - (600 * 5.5)) * -1
-        tempo_novo.append(a)
-
-df['Tempo'] = tempo_novo
-df.drop('Tempo_2', axis=1, inplace=True)
-# deixando o DataFrame nessa ordem de colunas
-df = df[['Quarto', 'Tempo', 'placar_casa', 'placar_visitante', 'Time', 'Indicador', 'Nome']]
-
-# Acrescentando mais colunas
-df['diferenca_placar_casa'] = df['placar_casa'] - df['placar_visitante']
-df['diferenca_placar_visitante'] = df['placar_visitante'] - df['placar_casa']
-
-# Analise da  pontuação dos times
-pontuacao = df[(df['Indicador'] == '3_Pts_C') |
-               (df['Indicador'] == '2_Pts_C') |
-               (df['Indicador'] == 'LL_Pts_C') |
-               (df['Indicador'] == 'EN') |
-               (df['Indicador'] == 'fim_partida')]
-
-# estamos invertendo os valores para deixar parecido com o jogo
-pontuacao = pontuacao[::-1]
-pontuacao.reset_index(drop=True, inplace=True)
-quartos = [600, 1200, 1800, 2400]
-
-
-# Análise da posse de bola dos times
-posse_bola = df[(df['Indicador'] == '3_Pts_C') | (df['Indicador'] == '3_Pts_T') |
-                (df['Indicador'] == '2_Pts_C') | (df['Indicador'] == '2_Pts_T') |
-                (df['Indicador'] == 'LL_Pts_C') | (df['Indicador'] == 'LL_Pts_T') |
-                (df['Indicador'] == 'ER') | (df['Indicador'] == 'FC_O') |
-                (df['Indicador'] == 'EN') | (df['Indicador'] == 'fim_partida')]
-
-# estamos invertendo os valores para deixar parecido com o jogo
-posse_bola = posse_bola[::-1]
-posse_bola.reset_index(drop=True, inplace=True)
-
-# Utilizamos uma Flag para diferenciar as paradas entre os tempos iniciais de cada posse
-flag = -1
-# valores da ultima linha
-ultima_linha = []
-# valores finais da posse de bola
-tempo_a_peridodo_final = []
-tempo_b_peridodo_final = []
-# identifica o tempo final
-tempo_a_fim = 0
-tempo_b_fim = 0
-
-for i in range(len(posse_bola)):
-    # caso corresponda ao nome do time A
-    if posse_bola['Time'][i] == sigla_time_a:
-        if flag != 1:
-            # quando chegamos na flag o pensamento é pegar o primeiro valor que apresenta no Time A
-            # o loop do Time B é terminado
-            tempo_b_peridodo_final.append(tempo_b_fim)
-            # pega o primeiro valor do tempo de início
-            tempo_a_fim = posse_bola['Tempo'][i]
-            flag = 1
         else:
-            tempo_a_fim = posse_bola['Tempo'][i]
-            flag = 1
-    # caso corresponda ao nome do time B
-    elif posse_bola['Time'][i] == sigla_time_b:
-        if flag != 0:
-            # quando chegamos na flag o pensamento é pegar o primeiro valor que apresenta no Time B
-            # o loop do Time A é terminado
-            tempo_a_peridodo_final.append(tempo_a_fim)
-            # pega o primeiro valor do tempo final
-            tempo_b_fim = posse_bola['Tempo'][i]
-            flag = 0
+            if re.findall(r'....', x):
+                x = x[0:2] + ':' + x[2:4]
+                mudar_hora.append(x)
+            elif re.findall(r'...', x):
+                x = '0' + x[0] + ':' + x[1:3]
+                mudar_hora.append(x)
+            elif re.findall(r'..', x):
+                x = '00:' + x
+                mudar_hora.append(x)
+            elif re.findall(r'.', x):
+                x = '00:0' + x
+                mudar_hora.append(x)
+
+    df['Tempo_2'] = mudar_hora
+    df.drop('Tempo', axis=1, inplace=True)
+    df['Tempo_2'] = df['Tempo_2'].apply(lambda x: dt.datetime.strptime(x, '%M:%S'))
+    df['Tempo_2'] = df['Tempo_2'].apply(lambda x: dt.time(x.hour, x.minute, x.second))
+    df['Tempo_2'] = df['Tempo_2'].apply(lambda x: (x.hour * 60 + x.minute) * 60 + x.second)
+    # transforma os dados para números inteiros
+    df['Quarto'] = df['Quarto'].apply(lambda l: int(l))
+
+    # modificar o tempo decrescente para crescente (* -1)
+    # acrescentar o tempo de cada quarto (primeiro quarto termina em 600s, o segundo quarto 2*600 = 1200 ...)
+    tempo_novo = []
+    for x, y in zip(df['Quarto'], df['Tempo_2']):
+        if x == 1:
+            a = (y - (600 * 1)) * -1
+            tempo_novo.append(a)
+        elif x == 2:
+            a = (y - (600 * 2)) * -1
+            tempo_novo.append(a)
+        elif x == 3:
+            a = (y - (600 * 3)) * -1
+            tempo_novo.append(a)
+        elif x == 4:
+            a = (y - (600 * 4)) * -1
+            tempo_novo.append(a)
+        elif x == 5:
+            a = (y - (600 * 4.5)) * -1
+            tempo_novo.append(a)
+        elif x == 6:
+            a = (y - (600 * 5)) * -1
+            tempo_novo.append(a)
+        elif x == 7:
+            a = (y - (600 * 5.5)) * -1
+            tempo_novo.append(a)
+
+    df['Tempo'] = tempo_novo
+    df.drop('Tempo_2', axis=1, inplace=True)
+    # deixando o DataFrame nessa ordem de colunas
+    df = df[['Quarto', 'Tempo', 'placar_casa', 'placar_visitante', 'Time', 'Indicador', 'Nome']]
+
+    # Acrescentando mais colunas
+    df['diferenca_placar_casa'] = df['placar_casa'] - df['placar_visitante']
+    df['diferenca_placar_visitante'] = df['placar_visitante'] - df['placar_casa']
+
+    # Analise da  pontuação dos times
+    pontuacao = df[(df['Indicador'] == '3_Pts_C') |
+                   (df['Indicador'] == '2_Pts_C') |
+                   (df['Indicador'] == 'LL_Pts_C') |
+                   (df['Indicador'] == 'EN') |
+                   (df['Indicador'] == 'fim_partida')]
+
+    # estamos invertendo os valores para deixar parecido com o jogo
+    pontuacao = pontuacao[::-1]
+    pontuacao.reset_index(drop=True, inplace=True)
+    quartos = [600, 1200, 1800, 2400]
+
+    # Análise da posse de bola dos times
+    posse_bola = df[(df['Indicador'] == '3_Pts_C') | (df['Indicador'] == '3_Pts_T') |
+                    (df['Indicador'] == '2_Pts_C') | (df['Indicador'] == '2_Pts_T') |
+                    (df['Indicador'] == 'LL_Pts_C') | (df['Indicador'] == 'LL_Pts_T') |
+                    (df['Indicador'] == 'ER') | (df['Indicador'] == 'FC_O') |
+                    (df['Indicador'] == 'EN') | (df['Indicador'] == 'fim_partida')]
+
+    # estamos invertendo os valores para deixar parecido com o jogo
+    posse_bola = posse_bola[::-1]
+    posse_bola.reset_index(drop=True, inplace=True)
+
+    # Utilizamos uma Flag para diferenciar as paradas entre os tempos iniciais de cada posse
+    flag = -1
+    # valores da ultima linha
+    ultima_linha = []
+    # valores finais da posse de bola
+    tempo_a_peridodo_final = []
+    tempo_b_peridodo_final = []
+    # identifica o tempo final
+    tempo_a_fim = 0
+    tempo_b_fim = 0
+
+    for i in range(len(posse_bola)):
+        # caso corresponda ao nome do time A
+        if posse_bola['Time'][i] == sigla_time_a:
+            if flag != 1:
+                # quando chegamos na flag o pensamento é pegar o primeiro valor que apresenta no Time A
+                # o loop do Time B é terminado
+                tempo_b_peridodo_final.append(tempo_b_fim)
+                # pega o primeiro valor do tempo de início
+                tempo_a_fim = posse_bola['Tempo'][i]
+                flag = 1
+            else:
+                tempo_a_fim = posse_bola['Tempo'][i]
+                flag = 1
+        # caso corresponda ao nome do time B
+        elif posse_bola['Time'][i] == sigla_time_b:
+            if flag != 0:
+                # quando chegamos na flag o pensamento é pegar o primeiro valor que apresenta no Time B
+                # o loop do Time A é terminado
+                tempo_a_peridodo_final.append(tempo_a_fim)
+                # pega o primeiro valor do tempo final
+                tempo_b_fim = posse_bola['Tempo'][i]
+                flag = 0
+            else:
+                tempo_b_fim = posse_bola['Tempo'][i]
+                flag = 0
+        # caso corresponda ao termino da partida
         else:
-            tempo_b_fim = posse_bola['Tempo'][i]
-            flag = 0
-    # caso corresponda ao termino da partida
-    else:
-        # caso chegue no final da linha os valores são armazenados
-        ultima_linha = posse_bola['Tempo'][i]
-        if flag != 1:
-            tempo_b_peridodo_final.append(tempo_b_fim)
-        else:
-            tempo_a_peridodo_final.append(tempo_a_fim)
+            # caso chegue no final da linha os valores são armazenados
+            ultima_linha = posse_bola['Tempo'][i]
+            if flag != 1:
+                tempo_b_peridodo_final.append(tempo_b_fim)
+            else:
+                tempo_a_peridodo_final.append(tempo_a_fim)
 
-# caso o tamanho do inicio esteja variando  por causa dos ultimos lances relacionados ao tempo de partida
-# a gente alinha dessa forma
-if len(tempo_a_peridodo_final) < len(tempo_b_peridodo_final):
-    # o fim do tempo b é o início do tempo A, pq a troca de bola é alternada
-    tempo_a_peridodo_final.append(ultima_linha)
-    nome_time_A = [sigla_time_a for item03 in range(len(tempo_a_peridodo_final))]
-    posse_de_bola_a = pd.DataFrame()
-    posse_de_bola_a['Time'] = nome_time_A
-    posse_de_bola_a['Tempo_de_Inicio'] = tempo_b_peridodo_final
-    posse_de_bola_a['Tempo_de_Termino'] = tempo_a_peridodo_final
-    ########################################################################
-    del (tempo_b_peridodo_final[0])
-    tempo_b_peridodo_final.append(ultima_linha)
-    nome_time_B = [sigla_time_b for item03 in range(len(tempo_b_peridodo_final))]
-    posse_de_bola_b = pd.DataFrame()
-    posse_de_bola_b['Time'] = nome_time_B
-    posse_de_bola_b['Tempo_de_Inicio'] = tempo_a_peridodo_final
-    posse_de_bola_b['Tempo_de_Termino'] = tempo_b_peridodo_final
-
-# e acrescenta no a e agora tb acrescenta no B
-elif len(tempo_a_peridodo_final) > len(tempo_b_peridodo_final):
-    tempo_b_peridodo_final.append(ultima_linha)
-    nome_time_B = [sigla_time_b for item03 in range(len(tempo_b_peridodo_final))]
-    posse_de_bola_b = pd.DataFrame()
-    posse_de_bola_b['Time'] = nome_time_B
-    posse_de_bola_b['Tempo_de_Inicio'] = tempo_a_peridodo_final
-    posse_de_bola_b['Tempo_de_Termino'] = tempo_b_peridodo_final
-    ###############################################################
-    del (tempo_a_peridodo_final[0])
-    tempo_a_peridodo_final.append(ultima_linha)
-    nome_time_A = [sigla_time_a for item03 in range(len(tempo_a_peridodo_final))]
-    posse_de_bola_a = pd.DataFrame()
-    posse_de_bola_a['Time'] = nome_time_A
-    posse_de_bola_a['Tempo_de_Inicio'] = tempo_b_peridodo_final
-    posse_de_bola_a['Tempo_de_Termino'] = tempo_a_peridodo_final
-
-elif len(tempo_a_peridodo_final) == len(tempo_b_peridodo_final):
-    if tempo_a_peridodo_final[0] == 0:
-        nome_time_B = [sigla_time_b for item03 in range(len(tempo_b_peridodo_final))]
-        posse_de_bola_b = pd.DataFrame()
-        posse_de_bola_b['Time'] = nome_time_B
-        posse_de_bola_b['Tempo_de_Inicio'] = tempo_a_peridodo_final
-        posse_de_bola_b['Tempo_de_Termino'] = tempo_b_peridodo_final
-        #######################################
-        del (tempo_a_peridodo_final[0])
+    # caso o tamanho do inicio esteja variando  por causa dos ultimos lances relacionados ao tempo de partida
+    # a gente alinha dessa forma
+    if len(tempo_a_peridodo_final) < len(tempo_b_peridodo_final):
+        # o fim do tempo b é o início do tempo A, pq a troca de bola é alternada
         tempo_a_peridodo_final.append(ultima_linha)
         nome_time_A = [sigla_time_a for item03 in range(len(tempo_a_peridodo_final))]
         posse_de_bola_a = pd.DataFrame()
         posse_de_bola_a['Time'] = nome_time_A
         posse_de_bola_a['Tempo_de_Inicio'] = tempo_b_peridodo_final
         posse_de_bola_a['Tempo_de_Termino'] = tempo_a_peridodo_final
-
-    elif tempo_b_peridodo_final[0] == 0:
-        nome_time_A = [sigla_time_a for item03 in range(len(tempo_a_peridodo_final))]
-        posse_de_bola_a = pd.DataFrame()
-        posse_de_bola_a['Time'] = nome_time_A
-        posse_de_bola_a['Tempo_de_Inicio'] = tempo_b_peridodo_final
-        posse_de_bola_a['Tempo_de_Termino'] = tempo_a_peridodo_final
-        #######################################
+        ########################################################################
         del (tempo_b_peridodo_final[0])
         tempo_b_peridodo_final.append(ultima_linha)
         nome_time_B = [sigla_time_b for item03 in range(len(tempo_b_peridodo_final))]
@@ -292,25 +202,82 @@ elif len(tempo_a_peridodo_final) == len(tempo_b_peridodo_final):
         posse_de_bola_b['Tempo_de_Inicio'] = tempo_a_peridodo_final
         posse_de_bola_b['Tempo_de_Termino'] = tempo_b_peridodo_final
 
-posse_de_bola = pd.concat([posse_de_bola_a, posse_de_bola_b], ignore_index=True)
-posse_de_bola.sort_values(by='Tempo_de_Inicio', ignore_index=True, inplace=True)
-posse_de_bola['Tempo_de_Termino'] = posse_de_bola['Tempo_de_Termino'].astype(int)
-posse_de_bola['Tempo_Posse'] = posse_de_bola['Tempo_de_Termino'] - posse_de_bola['Tempo_de_Inicio']
-posse_de_bola['Tempo_Posse'] = posse_de_bola['Tempo_Posse'].apply(lambda x: abs(x))
-posse_de_bola.reset_index(inplace=True, drop=True)
+    # e acrescenta no a e agora tb acrescenta no B
+    elif len(tempo_a_peridodo_final) > len(tempo_b_peridodo_final):
+        tempo_b_peridodo_final.append(ultima_linha)
+        nome_time_B = [sigla_time_b for item03 in range(len(tempo_b_peridodo_final))]
+        posse_de_bola_b = pd.DataFrame()
+        posse_de_bola_b['Time'] = nome_time_B
+        posse_de_bola_b['Tempo_de_Inicio'] = tempo_a_peridodo_final
+        posse_de_bola_b['Tempo_de_Termino'] = tempo_b_peridodo_final
+        ###############################################################
+        del (tempo_a_peridodo_final[0])
+        tempo_a_peridodo_final.append(ultima_linha)
+        nome_time_A = [sigla_time_a for item03 in range(len(tempo_a_peridodo_final))]
+        posse_de_bola_a = pd.DataFrame()
+        posse_de_bola_a['Time'] = nome_time_A
+        posse_de_bola_a['Tempo_de_Inicio'] = tempo_b_peridodo_final
+        posse_de_bola_a['Tempo_de_Termino'] = tempo_a_peridodo_final
 
-posse_de_bola.to_csv('tempo2.csv')
+    elif len(tempo_a_peridodo_final) == len(tempo_b_peridodo_final):
+        if tempo_a_peridodo_final[0] == 0:
+            nome_time_B = [sigla_time_b for item03 in range(len(tempo_b_peridodo_final))]
+            posse_de_bola_b = pd.DataFrame()
+            posse_de_bola_b['Time'] = nome_time_B
+            posse_de_bola_b['Tempo_de_Inicio'] = tempo_a_peridodo_final
+            posse_de_bola_b['Tempo_de_Termino'] = tempo_b_peridodo_final
+            #######################################
+            del (tempo_a_peridodo_final[0])
+            tempo_a_peridodo_final.append(ultima_linha)
+            nome_time_A = [sigla_time_a for item03 in range(len(tempo_a_peridodo_final))]
+            posse_de_bola_a = pd.DataFrame()
+            posse_de_bola_a['Time'] = nome_time_A
+            posse_de_bola_a['Tempo_de_Inicio'] = tempo_b_peridodo_final
+            posse_de_bola_a['Tempo_de_Termino'] = tempo_a_peridodo_final
 
-teste = posse_de_bola[posse_de_bola['Time'] == sigla_time_a]
-teste.reset_index(inplace=True, drop=True)
-teste1 = posse_de_bola[posse_de_bola['Time'] == sigla_time_b]
-teste1.reset_index(inplace=True, drop=True)
+        elif tempo_b_peridodo_final[0] == 0:
+            nome_time_A = [sigla_time_a for item03 in range(len(tempo_a_peridodo_final))]
+            posse_de_bola_a = pd.DataFrame()
+            posse_de_bola_a['Time'] = nome_time_A
+            posse_de_bola_a['Tempo_de_Inicio'] = tempo_b_peridodo_final
+            posse_de_bola_a['Tempo_de_Termino'] = tempo_a_peridodo_final
+            #######################################
+            del (tempo_b_peridodo_final[0])
+            tempo_b_peridodo_final.append(ultima_linha)
+            nome_time_B = [sigla_time_b for item03 in range(len(tempo_b_peridodo_final))]
+            posse_de_bola_b = pd.DataFrame()
+            posse_de_bola_b['Time'] = nome_time_B
+            posse_de_bola_b['Tempo_de_Inicio'] = tempo_a_peridodo_final
+            posse_de_bola_b['Tempo_de_Termino'] = tempo_b_peridodo_final
 
-grafico_posse_time1 = teste
-grafico_posse_time1.reset_index(inplace=True)
-grafico_posse_time2 = teste1
-grafico_posse_time2.reset_index(inplace=True)
+    posse_de_bola = pd.concat([posse_de_bola_a, posse_de_bola_b], ignore_index=True)
+    posse_de_bola.sort_values(by='Tempo_de_Inicio', ignore_index=True, inplace=True)
+    posse_de_bola['Tempo_de_Termino'] = posse_de_bola['Tempo_de_Termino'].astype(int)
+    posse_de_bola['Tempo_Posse'] = posse_de_bola['Tempo_de_Termino'] - posse_de_bola['Tempo_de_Inicio']
+    posse_de_bola['Tempo_Posse'] = posse_de_bola['Tempo_Posse'].apply(lambda x: abs(x))
+    posse_de_bola.reset_index(inplace=True, drop=True)
 
+    posse_de_bola.to_csv('tempo2.csv')
+
+    teste = posse_de_bola[posse_de_bola['Time'] == sigla_time_a]
+    teste.reset_index(inplace=True, drop=True)
+    teste1 = posse_de_bola[posse_de_bola['Time'] == sigla_time_b]
+    teste1.reset_index(inplace=True, drop=True)
+
+    grafico_posse_time1 = teste
+    grafico_posse_time1.reset_index(inplace=True)
+    grafico_posse_time2 = teste1
+    grafico_posse_time2.reset_index(inplace=True)
+    #####################################################
+    # colocar todas as posses em um só lugar
+    df_posse1 = pd.concat([grafico_posse_time1, grafico_posse_time2], ignore_index=True)
+    print(df_posse1)
+    df_posse = df_posse.append(df_posse1)
+
+df_posse.to_csv('tempo2.csv')
+
+'''
+'''
 ##########################################################
 # Análise dos períodos positivos e negativos do times
 # Criar um novo dataFrame para analisar os períodos positivos dos times
@@ -335,14 +302,16 @@ data.reset_index(drop=True, inplace=True)
 data['pontuacao'] = data['pontuacao'].astype(int)
 data.to_csv('tempo2.csv')
 
+
 # esse df é usado para retirar alguns argumentos que não fazem diferença
 # na função abaixo retiramos as listas vazias que o loop gera quando o time se repete
-def remove_item(my_list,*args):
+def remove_item(my_list, *args):
     deletar = list(args)
     for item in deletar:
         while item in my_list:
             my_list.remove(item)
     return my_list
+
 
 # Utilizamos uma Flag para diferenciar as paradas entre os tempos iniciais de cada posse
 flag = -1
@@ -435,7 +404,7 @@ if len(tempo_a_peridodo_final) < len(tempo_b_peridodo_final):
     posse_de_bola_A['Tempo_de_Termino'] = tempo_a_peridodo_final
     posse_de_bola_A['Soma_Pontuacao'] = soma_a
     ########################################################################
-    del(tempo_b_peridodo_final[0])
+    del (tempo_b_peridodo_final[0])
     tempo_b_peridodo_final.append(ultima_linha)
     soma_b.append(np.nan)
     nome_time_B = [sigla_time_b for item03 in range(len(tempo_b_peridodo_final))]
@@ -455,7 +424,7 @@ if len(tempo_a_peridodo_final) > len(tempo_b_peridodo_final):
     posse_de_bola_B['Tempo_de_Termino'] = tempo_b_peridodo_final
     posse_de_bola_B['Soma_Pontuacao'] = soma_b
     ###############################################################
-    del(tempo_a_peridodo_final[0])
+    del (tempo_a_peridodo_final[0])
     tempo_a_peridodo_final.append(ultima_linha)
     soma_a.append(np.nan)
     nome_time_A = [sigla_time_a for item03 in range(len(tempo_a_peridodo_final))]
@@ -474,7 +443,7 @@ if len(tempo_a_peridodo_final) == len(tempo_b_peridodo_final):
         posse_de_bola_B['Tempo_de_Termino'] = tempo_b_peridodo_final
         posse_de_bola_B['Soma_Pontuacao'] = soma_b
         #######################################
-        del(tempo_a_peridodo_final[0])
+        del (tempo_a_peridodo_final[0])
         tempo_a_peridodo_final.append(ultima_linha)
         nome_time_A = [sigla_time_a for item03 in range(len(tempo_a_peridodo_final))]
         posse_de_bola_A = pd.DataFrame()
@@ -490,7 +459,7 @@ if len(tempo_a_peridodo_final) == len(tempo_b_peridodo_final):
         posse_de_bola_A['Tempo_de_Termino'] = tempo_a_peridodo_final
         posse_de_bola_A['Soma_Pontuacao'] = soma_a
         #######################################
-        del(tempo_b_peridodo_final[0])
+        del (tempo_b_peridodo_final[0])
         tempo_b_peridodo_final.append(ultima_linha)
         nome_time_B = [sigla_time_b for item03 in range(len(tempo_b_peridodo_final))]
         posse_de_bola_B = pd.DataFrame()
@@ -514,7 +483,6 @@ for i in range(len(posse_de_bola_bruta)):
                 periodo_potencial_a_positivo = 0
             elif periodo_potencial_a_positivo != 1:
                 periodo_potencial_a_positivo = 0
-
 
 periodos_iniciais = posse_de_bola_bruta[~posse_de_bola_bruta['Tempo_de_Inicio'].isin(periodos_posteriores)]
 periodos_iniciais.reset_index(inplace=True, drop=True)
@@ -567,7 +535,7 @@ if len(tempo_a_peridodo_final) == len(tempo_b_peridodo_final):
         periodos_B['Tempo_de_Termino'] = tempo_b_peridodo_final
         periodos_B['Soma_Pontuacao'] = pontuação_b
         #######################################
-        del(tempo_a_peridodo_final[0])
+        del (tempo_a_peridodo_final[0])
         tempo_a_peridodo_final.append(ultima_linha)
         periodos_A = pd.DataFrame()
         periodos_A['Time'] = nome_time_A
@@ -581,7 +549,7 @@ if len(tempo_a_peridodo_final) == len(tempo_b_peridodo_final):
         periodos_A['Tempo_de_Termino'] = tempo_a_peridodo_final
         periodos_A['Soma_Pontuacao'] = pontuação_a
         #######################################
-        del(tempo_b_peridodo_final[0])
+        del (tempo_b_peridodo_final[0])
         tempo_b_peridodo_final.append(ultima_linha)
         periodos_B = pd.DataFrame()
         periodos_B['Time'] = nome_time_B
@@ -599,4 +567,4 @@ periodo_final_a_final = list(periodo_final_a['Tempo_de_Termino'])
 periodo_final_b = periodo.loc[(periodo['Soma_Pontuacao'] >= 5) & (periodo['Time'] == sigla_time_b)]
 periodo_final_b_inicio = list(periodo_final_b['Tempo_de_Inicio'])
 periodo_final_b_final = list(periodo_final_b['Tempo_de_Termino'])
-
+'''
