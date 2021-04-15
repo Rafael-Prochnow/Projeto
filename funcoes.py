@@ -51,10 +51,21 @@ def siglas(nome_time):
         return 'CAX'
 
     elif nome_time == 'Pato Basquete':
-        return 'PAT'
-
+        # return 'PAT'
+        return 'APB'
     elif nome_time == 'São Paulo':
         return 'SPF'
+    #####################################
+    elif nome_time == 'Rio Claro':
+        return 'RCB'
+    elif nome_time == 'São José':
+        return 'SJO'
+    elif nome_time == 'Botafogo':
+        return 'BOT'
+    elif nome_time == 'Vasco da Gama':
+        return 'VAS'
+    elif nome_time == 'Joinville   AABJ ':
+        return 'JLE'
 
 
 def limpeza_tempo(df):

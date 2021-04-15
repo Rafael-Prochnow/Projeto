@@ -4,22 +4,22 @@ import numpy as np
 import datetime as dt
 from datetime import datetime
 import re
-from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo, resultado_da_posse_de_bola, juntar_posses, \
-    acrescentar_indicadores, par_impar, periodo_potencial, identificardor_periodo_positivo, \
+from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo, resultado_da_posse_de_bola,\
+    juntar_posses, acrescentar_indicadores, par_impar, periodo_potencial, identificardor_periodo_positivo, \
     acrescentar_valores_gerais, criando_dataframe_times
 
 path = r'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 2020'
 files = os.listdir(path)
-df_posse = pd.DataFrame()
+
 
 files_csv = [path + '\\' + f for f in files if f[-3:] == 'csv']
-
+aprendizado = pd.DataFrame([])
 
 aaa = 1
 for f in files_csv:
     print(f'Número da partida {aaa}')
     aaa += 1
-    #print(f)
+    # print(f)
     df = pd.read_csv(f)
     arquivo_time = f.replace('C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 2020', '')
     arquivo_time = arquivo_time.replace('. C.', '')
@@ -538,10 +538,11 @@ for f in files_csv:
 
     tabela_times['Tempo_de_posse'] = [contagem['Tempo_de_posse'][0],
                                       contagem['Tempo_de_posse'][1]]
-
-    tabela_times.to_csv('ex.csv')
+    # Dataframe para o Aprendizado
+    aprendizado = aprendizado.append(tabela_times, ignore_index=True)
     ##################################################################################################################
     # Análise Avançada
     # analise = criando_analise_avancada_times(Tabela_Final)
     ##################################################################################################################
 
+aprendizado.to_csv('ex.csv')

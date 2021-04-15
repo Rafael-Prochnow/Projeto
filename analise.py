@@ -59,7 +59,7 @@ pontuacao.reset_index(drop=True, inplace=True)
 # colocar a separação dos quartos nos gráficos
 quartos = quartos_do_jogo(df)
 
-'''plt.style.use('seaborn')
+plt.style.use('seaborn')
 sns.set_style('white')
 plt.figure(figsize=(9, 5))
 tempo = pontuacao['Tempo']
@@ -74,7 +74,7 @@ plt.title('Gráfico do Placar Acumulativo do Jogo', fontsize=18)
 plt.ylabel('Pontos')
 plt.xlabel('Segundos')
 plt.tight_layout()
-plt.show()'''
+plt.show()
 
 # Análise da Posse de Bola dos times
 posse_bola = df[(df['Indicador'] == '3_Pts_C') | (df['Indicador'] == '3_Pts_T') |
@@ -110,7 +110,7 @@ x = grafico_posse_time1['index']
 my_xticks = x
 frequency = 10
 
-'''plt.style.use('seaborn')
+plt.style.use('seaborn')
 sns.set_style('white')
 plt.figure(figsize=(11, 5))
 sns.barplot(x='index', y='Time_Novo', data=grafico_posse_time1, color='black')
@@ -123,7 +123,7 @@ valores = [24, 14, 10, 5]
 for i in valores:
     plt.axhline(i, color='red', alpha=0.6, label=f'{i} segundos')
 # plt.legend(loc='upper right', bbox_to_anchor=(1.1, 1), prop={'size':14})
-plt.show()'''
+plt.show()
 
 lu_time_b = posse_de_bola
 lu_time_b['Time_Novo'] = 0
@@ -140,7 +140,7 @@ x2 = grafico_posse_time2['index']
 my_xticks2 = x2
 frequency2 = 10
 
-'''plt.style.use('seaborn')
+plt.style.use('seaborn')
 sns.set_style('white')
 plt.figure(figsize=(11, 5))
 sns.barplot(x='index', y='Time_Novo', data=grafico_posse_time2, color='black')
@@ -153,7 +153,7 @@ valores = [24, 14, 10, 5]
 for i in valores:
     plt.axhline(i, color='red', alpha=0.6, label=f'{i} segundos')
 # plt.legend(loc='upper right', bbox_to_anchor=(1.1, 1), prop={'size':14})
-plt.show()'''
+plt.show()
 
 # Análises descritiva da posse de bola
 
@@ -218,7 +218,7 @@ valores_a.update(valores_b)
 tempos = ('<=5', '>5<=10', '>10<=14', '>14<=24', '>24')
 ataques = pd.DataFrame(data=valores_a, index=tempos)
 
-'''#  Gráfico da diferença da placar
+#  Gráfico da diferença da placar
 plt.style.use('seaborn')
 sns.set_style('white')
 plt.figure(figsize=(11, 5))
@@ -232,7 +232,7 @@ plt.xticks(fontsize=10)
 for x in quartos:
     plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
 plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
-plt.show()'''
+plt.show()
 
 # Analisar os períodos positivos dos times
 # Utilizando a diferença do placar entre casa e visitante, aplicando diff (diferença entre as linhas)
@@ -364,7 +364,7 @@ else:
 del segmento[0]
 
 
-'''# GRÁFICO
+# GRÁFICO
 plt.style.use('seaborn')
 sns.set_style('white')
 plt.figure(figsize=(11, 5))
@@ -384,12 +384,12 @@ for i in segmento:
 for x in quartos:
     plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
 plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
-plt.show()'''
+plt.show()
 
 # Time B
 del segmento_dois[0]
 
-'''# GRÁFICO
+# GRÁFICO
 plt.style.use('seaborn')
 sns.set_style('white')
 plt.figure(figsize=(11, 5))
@@ -409,7 +409,7 @@ for i in segmento_dois:
 for x in quartos:
     plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
 plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
-plt.show()'''
+plt.show()
 
 print('Time A')
 print(len(segmento))
@@ -516,7 +516,6 @@ tabela_times['Ataques/min'] = [contagem['Ataques/min'][0],
 tabela_times['Tempo_de_posse'] = [contagem['Tempo_de_posse'][0],
                                   contagem['Tempo_de_posse'][1]]
 
-tabela_times.to_csv('ex.csv')
 ##################################################################################################################
 '''
 # Análise Avançada
