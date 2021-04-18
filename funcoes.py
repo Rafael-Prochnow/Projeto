@@ -7,7 +7,7 @@ import numpy as np
 # corresponde as siglas de cada jogo
 
 
-def siglas(nome_time):
+def siglas(nome_time, temporada):
     if nome_time == 'Bauru':
         return 'BAU'
 
@@ -17,8 +17,12 @@ def siglas(nome_time):
     elif nome_time == 'VipTech CMB':
         return 'CMO'
 
-    elif nome_time == 'Brasília':
+    elif (nome_time == 'Brasília') & (temporada == '2020'):
         return 'BSB'
+    elif (nome_time == 'Brasília') & (temporada == '2019'):
+        return 'BSB'
+    elif (nome_time == 'Brasília') & (temporada == '2018'):
+        return 'BRA'
 
     elif nome_time == 'Paulistano':
         return 'CAP'
@@ -44,15 +48,21 @@ def siglas(nome_time):
     elif nome_time == 'Pinheiros':
         return 'PIN'
 
-    elif nome_time == 'Fortaleza B':
+    elif (nome_time == 'Fortaleza B') & (temporada == '2020'):
         return 'FOR'
+    elif (nome_time == 'Fortaleza B') & (temporada == '2019'):
+        return 'CEA'
+    elif (nome_time == 'Fortaleza B') & (temporada == '2018'):
+        return 'CEA'
+    elif (nome_time == 'Fortaleza B') & (temporada == '2017'):
+        return 'CEA'
 
     elif nome_time == 'KTO Caxias do Sul':
         return 'CAX'
 
     elif nome_time == 'Pato Basquete':
-        # return 'PAT'
-        return 'APB'
+        return 'PAT'
+
     elif nome_time == 'São Paulo':
         return 'SPF'
     #####################################
@@ -66,6 +76,13 @@ def siglas(nome_time):
         return 'VAS'
     elif nome_time == 'Joinville   AABJ ':
         return 'JLE'
+    #######################################################
+    elif nome_time == 'Vitória':
+        return 'VIT'
+    elif nome_time == 'L Sorocabana':
+        return 'LSB'
+    elif nome_time == 'Caxias do Sul':
+        return 'CAX'
 
 
 def limpeza_tempo(df):

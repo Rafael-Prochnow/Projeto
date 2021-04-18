@@ -1,14 +1,14 @@
 import pandas as pd
 import re
 from datetime import datetime
-import dataframe_image as dfi
 import matplotlib.pyplot as plt
 import seaborn as sns
 from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo, resultado_da_posse_de_bola,\
     juntar_posses, acrescentar_indicadores, par_impar, periodo_potencial, identificardor_periodo_positivo, \
     acrescentar_valores_gerais, criando_dataframe_times, criando_analise_avancada_times
 
-arquivo = "tabela_11_Brasília_x_Flamengo.csv"
+aprendizado = pd.DataFrame([])
+arquivo = "tabela_103_Pato Basquete_x_Corinthians.csv"
 df = pd.read_csv(arquivo)
 
 expressao_regular = re.findall(r'[A-Z].*?[.]', arquivo)
@@ -22,14 +22,14 @@ fora = expressao_regular0[1]
 nome_time_fora = fora.replace(".'", "")
 
 # Precisa colocar algumas informações básicas sobre o jogo para que completar a tabela
-sigla_time_a = siglas(nome_time_casa)
-sigla_time_b = siglas(nome_time_fora)
 casa = 'casa'
 fora = 'fora'
 classificatoria = '1 Turno'
 temporada = 2019
 data_hoje = datetime.today().strftime('%d/%m/%Y')
 dia_do_jogo = '02/01/2021'
+sigla_time_a = siglas(nome_time_casa, temporada)
+sigla_time_b = siglas(nome_time_fora, temporada)
 
 # Limpeza dos dados
 df = limpeza_tempo(df)
@@ -516,10 +516,11 @@ tabela_times['Ataques/min'] = [contagem['Ataques/min'][0],
 tabela_times['Tempo_de_posse'] = [contagem['Tempo_de_posse'][0],
                                   contagem['Tempo_de_posse'][1]]
 
+aprendizado = aprendizado.append(tabela_times, ignore_index=True)
 ##################################################################################################################
 '''
 # Análise Avançada
 analise = criando_analise_avancada_times(Tabela_Final)
 ##################################################################################################################
 '''
-
+aprendizado.to_csv('ex1.csv')
