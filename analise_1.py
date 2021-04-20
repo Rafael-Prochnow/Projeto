@@ -15,6 +15,7 @@ for k in ANOS:
     path = fr'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 20{k}'
     files = os.listdir(path)
     files_csv = [path + '\\' + f for f in files if f[-3:] == 'csv']
+    files_csv = sorted(files_csv, key=len)
     aaa = 1
     for f in files_csv:
         print(f'Número da partida {aaa}')
@@ -549,4 +550,3 @@ for k in ANOS:
         ############################################################################################################
 
 aprendizado.to_csv('ex.csv')
-
