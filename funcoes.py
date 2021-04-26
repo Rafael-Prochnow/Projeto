@@ -10,59 +10,28 @@ import numpy as np
 def siglas(nome_time, temporada):
     if nome_time == 'Bauru':
         return 'BAU'
-
     elif nome_time == 'Mogi':
         return 'MOG'
-
     elif nome_time == 'VipTech CMB':
         return 'CMO'
-
-    elif (nome_time == 'Brasília') & (temporada == '2020'):
-        return 'BSB'
-    elif (nome_time == 'Brasília') & (temporada == '2019'):
-        return 'BSB'
-    elif (nome_time == 'Brasília') & (temporada == '2018'):
-        return 'BRA'
-
-    elif nome_time == 'Paulistano':
-        return 'CAP'
-
     elif nome_time == 'Flamengo':
         return 'FLA'
-
     elif nome_time == 'Minas':
         return 'MIN'
-
     elif nome_time == 'UNIFACISA':
         return 'UFC'
-
     elif nome_time == 'Cerrado Basquete':
         return 'CER'
-
     elif nome_time == 'Sesi Franca':
         return 'FRA'
-
     elif nome_time == 'Corinthians':
         return 'COR'
-
     elif nome_time == 'Pinheiros':
         return 'PIN'
-
-    elif (nome_time == 'Fortaleza B') & (temporada == '2020'):
-        return 'FOR'
-    elif (nome_time == 'Fortaleza B') & (temporada == '2019'):
-        return 'CEA'
-    elif (nome_time == 'Fortaleza B') & (temporada == '2018'):
-        return 'CEA'
-    elif (nome_time == 'Fortaleza B') & (temporada == '2017'):
-        return 'CEA'
-
     elif nome_time == 'KTO Caxias do Sul':
         return 'CAX'
-
     elif nome_time == 'Pato Basquete':
         return 'PAT'
-
     elif nome_time == 'São Paulo':
         return 'SPF'
     #####################################
@@ -76,13 +45,40 @@ def siglas(nome_time, temporada):
         return 'VAS'
     elif nome_time == 'Joinville   AABJ ':
         return 'JLE'
-    #######################################################
+    elif nome_time == 'Palmeiras':
+        return 'PAL'
+    elif nome_time == 'Uberlândia':
+        return 'UBE'
+    elif nome_time == 'Limeira':
+        return 'LIM'
     elif nome_time == 'Vitória':
         return 'VIT'
     elif nome_time == 'L Sorocabana':
         return 'LSB'
     elif nome_time == 'Caxias do Sul':
         return 'CAX'
+    elif nome_time == 'Macaé Basquete':
+        return 'MAC'
+    elif nome_time == 'Espírito Santo':
+        return 'ESB'
+    elif nome_time == 'Goiânia':
+        return 'GOI'
+    #######################################################
+    elif nome_time == 'Brasília':
+        if (temporada == '2020') | (temporada == '2019'):
+            return 'BSB'
+        else:
+            return 'BRA'
+    elif nome_time == 'Fortaleza B':
+        if temporada == '2020':
+            return 'FOR'
+        else:
+            return 'CEA'
+    elif nome_time == 'Paulistano':
+        if (temporada == '2015') | (temporada == '2014') | (temporada == '2013'):
+            return 'PAU'
+        else:
+            return 'CAP'
 
 
 def limpeza_tempo(df):
@@ -185,7 +181,6 @@ def resultado_da_posse_de_bola(posse_bola, sigla_time_a, sigla_time_b):
                 lstime_b.append(lss)
             else:
                 pass
-
         if a.Time not in [sigla_time_a]:
             idx = a.Index - 1
             if idx >= 0:

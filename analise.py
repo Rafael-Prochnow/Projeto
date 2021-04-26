@@ -8,7 +8,7 @@ from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo
     acrescentar_valores_gerais, criando_dataframe_times, criando_analise_avancada_times
 
 aprendizado = pd.DataFrame([])
-arquivo = "tabela_103_Pato Basquete_x_Corinthians.csv"
+arquivo = ".csv"
 df = pd.read_csv(arquivo)
 
 expressao_regular = re.findall(r'[A-Z].*?[.]', arquivo)
@@ -21,6 +21,8 @@ nome_time_casa = casa.replace("'", "")
 fora = expressao_regular0[1]
 nome_time_fora = fora.replace(".'", "")
 
+print(nome_time_casa)
+print(nome_time_fora)
 # Precisa colocar algumas informações básicas sobre o jogo para que completar a tabela
 casa = 'casa'
 fora = 'fora'
@@ -86,6 +88,8 @@ posse_bola = df[(df['Indicador'] == '3_Pts_C') | (df['Indicador'] == '3_Pts_T') 
 # estamos invertendo os valores para deixar parecido com o jogo
 posse_bola = posse_bola[::-1]
 posse_bola.reset_index(drop=True, inplace=True)
+print(sigla_time_a)
+print(sigla_time_b)
 
 # Formula que descobre a posse de bola de cada time
 df_time_a, df_time_b = resultado_da_posse_de_bola(posse_bola, sigla_time_a, sigla_time_b)
@@ -93,7 +97,7 @@ df_time_a, df_time_b = resultado_da_posse_de_bola(posse_bola, sigla_time_a, sigl
 # Formula que junta as posses de bolas de cada time
 posse_de_bola = juntar_posses(df_time_a, df_time_b)
 
-# Análises da posse de bola
+'''# Análises da posse de bola
 lu_time_a = posse_de_bola
 lu_time_a['Time_Novo'] = 0
 
@@ -519,8 +523,8 @@ tabela_times['Tempo_de_posse'] = [contagem['Tempo_de_posse'][0],
 aprendizado = aprendizado.append(tabela_times, ignore_index=True)
 ##################################################################################################################
 '''
-# Análise Avançada
-analise = criando_analise_avancada_times(Tabela_Final)
+'''# Análise Avançada
+analise = criando_analise_avancada_times(Tabela_Final)'''
 ##################################################################################################################
-'''
-aprendizado.to_csv('ex1.csv')
+
+# aprendizado.to_csv('ex1.csv')

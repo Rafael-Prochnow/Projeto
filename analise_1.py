@@ -8,19 +8,21 @@ from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-ANOS = [20, 19, 18, 17]
+# ANOS = [20, 19, 18, 17, 16, 15, 14]
+ANOS = [13]
 aprendizado = pd.DataFrame([])
 
 for k in ANOS:
     path = fr'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 20{k}'
     files = os.listdir(path)
     files_csv = [path + '\\' + f for f in files if f[-3:] == 'csv']
-    files_csv = sorted(files_csv, key=len)
+    # files_csv = sorted(files_csv, key=len)
+    # print(files_csv)
     aaa = 1
     for f in files_csv:
         print(f'Número da partida {aaa}')
         aaa += 1
-        # print(f)
+        print(f)
         df = pd.read_csv(f)
         arquivo_time = f.replace(f'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 20{k}', '')
         arquivo_time = arquivo_time.replace('. C.', '')
