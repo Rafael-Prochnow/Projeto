@@ -400,8 +400,8 @@ def criando_dataframe_times(tabela_time1_pivot, nome_time_casa):
     Time1_Final['Ar_Pts_C'] = (Time1_Final['Pts_3_C'] / 3) + (Time1_Final['Pts_2_C'] / 2) - (
                 Time1_Final['EN'] / 2)  # por o teste3['Pts_2_C'] contabiliza EN
     Time1_Final['Ar_Pts_T'] = (Time1_Final['Pts_3_T'] / 3) + (Time1_Final['Pts_2_T'] / 2)  # NÃO contabiliza EN
-    Time1_Final['Pts_C'] = (Time1_Final['Pts_3_C'] / 3) + (Time1_Final['Pts_2_C'] / 2) + Time1_Final['LL_C']
-    Time1_Final['Pts_T'] = (Time1_Final['Pts_3_T'] / 3) + (Time1_Final['Pts_2_T'] / 2) + Time1_Final['LL_T']
+    Time1_Final['Pts_C'] = Time1_Final['Pts_3_C'] + Time1_Final['Pts_2_C'] + Time1_Final['LL_C'] + Time1_Final['EN']
+    Time1_Final['Pts_T'] = Time1_Final['Pts_3_T'] + Time1_Final['Pts_2_T'] + Time1_Final['LL_T']
     # mudar os nomes para ações coletivas
     Time1_Final = Time1_Final[(Time1_Final['Nome'] != nome_time_casa)]
     Time1_Final['posse_de_bola_Oliver'] = round(

@@ -1,25 +1,38 @@
 import pandas as pd
+import os
 
 
-dados = pd.read_csv("Tabela_geral_2019_nova.csv")
-UNIFACISA = dados.query("Time == 'UNIFACISA'").reset_index(drop=True)
+ANOS = [20]
 
-data = {'Total Cpu Time': ['00:00:14', '00:00:15', '00:00:16', '00:00:17'], 'Date': ['2019-02-07', '2019-02-07', '2019-02-08', '2019-02-08'] }
+for k in ANOS:
+    path_jogada = fr'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 20{k}'
+    files_jogada = os.listdir(path_jogada)
+    files_jogada_csv = [path_jogada + '\\' + f for f in files_jogada if f[-3:] == 'csv']
 
-df = pd.DataFrame(data, columns=['Total Cpu Time', 'Date'])
-print(type(df['Total Cpu Time'][0]))
+    path_tabela = fr'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados/temporada 20{k}'
+    files_tabela = os.listdir(path_tabela)
+    files_tabela_csv = [path_tabela + '\\' + f for f in files_tabela if f[-3:] == 'csv']
 
-df['Date'] = pd.to_datetime(df['Date'])
-df['Total Cpu Time'] = pd.to_timedelta(df['Total Cpu Time'])
-print(df)
+    aaa = 1
+    for f in files_tabela_csv:
+        print(f'Número da partida {aaa}')
+        aaa += 1
+        arquivo_time = f.replace(f'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados/temporada 20{k}', '')
+        print(arquivo_time)
 
-'''
+        tabela_times['Data'] = ['nan', 'nan']
+        tabela_times['Semana'] = ['nan', 'nan']
+        tabela_times['Classificatoria/Playoffs'] = ['nan', 'nan']
+        ########################################################################################################
+        for j in files_tabela_csv:
+            arquivo_tabela_time = j.replace(f'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados/temporada 20{k}', '')
+            if arquivo_time == arquivo_tabela_time:
+                print('sim')
+                df_tabela = pd.read_csv(j)
+                tabela_times['Data'] = [df_tabela['Data'][1], df_tabela['Data'][1]]
+                tabela_times['Semana'] = [df_tabela['Semana'][1], df_tabela['Semana'][1]]
+                tabela_times['Classificatoria/Playoffs'] = [df_tabela['Classificatoria/Playoffs'][1],
+                                                            df_tabela['Classificatoria/Playoffs'][1]]
+            else:
+                pass
 
-
-
-print(df)
-
-grouped = df['Total Cpu Time'].groupby(df['Date']).sum()
-print(grouped)
-
-'''

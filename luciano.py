@@ -9,9 +9,10 @@ from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo
 
 path = r'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 2018'
 files = os.listdir(path)
-df_posse = pd.DataFrame()
+
 
 files_csv = [path + '\\' + f for f in files if f[-3:] == 'csv']
+df_posse = pd.DataFrame()
 '''
 data = pd.read_csv(files_csv[14])
 arquivo_time = files_csv[15].replace('C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 2020', '')

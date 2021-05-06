@@ -2,14 +2,14 @@ import pandas as pd
 import os
 from datetime import datetime
 import re
-from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo, resultado_da_posse_de_bola,\
+from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo, resultado_da_posse_de_bola, \
     juntar_posses, acrescentar_indicadores, par_impar, periodo_potencial, identificardor_periodo_positivo, \
     acrescentar_valores_gerais, criando_dataframe_times
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# ANOS = [20, 19, 18, 17, 16, 15, 14]
-ANOS = [13]
+# ANOS = [20, 19, 18, 17, 16, 15, 14, 13]
+ANOS = [20]
 aprendizado = pd.DataFrame([])
 
 for k in ANOS:
@@ -18,6 +18,10 @@ for k in ANOS:
     files_csv = [path + '\\' + f for f in files if f[-3:] == 'csv']
     # files_csv = sorted(files_csv, key=len)
     # print(files_csv)
+    path_tabela = fr'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados/temporada 20{k}'
+    files_tabela = os.listdir(path_tabela)
+    files_tabela_csv = [path_tabela + '\\' + f for f in files_tabela if f[-3:] == 'csv']
+
     aaa = 1
     for f in files_csv:
         print(f'Número da partida {aaa}')
@@ -391,59 +395,58 @@ for k in ANOS:
 
         # Time A
         del segmento[0]
-
-        '''# GRÁFICO
-        plt.style.use('seaborn')
-        sns.set_style('white')
-        plt.figure(figsize=(11, 5))
-        plt.plot(posse_de_bola['Tempo_Fim'], posse_de_bola['dif_casa'], color='black')
-        plt.title('Diferença do Placar Casa Durante a Partida', fontsize=12)
-        plt.ylabel('Diferença do Placar', fontsize=10)
-        plt.xlabel('Tempo de Jogo em Segundos', fontsize=10)
-        plt.yticks(fontsize=10)
-        plt.xticks(fontsize=10)
-        final_t = []
-        final_dif = []
-        for i in segmento:
-            selecao = (posse_de_bola['Tempo_Fim'] >= i[0]) & (posse_de_bola['Tempo_Fim'] <= i[1])
-            df_filtado_dif = posse_de_bola[selecao]['dif_casa']
-            df_filtado_t = posse_de_bola[selecao]['Tempo_Fim']
-            plt.plot(df_filtado_t, df_filtado_dif, color='red')
-        for x in quartos:
-            plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
-        plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
-        plt.show()'''
-
-        # Time B
-        del segmento_dois[0]
-
-        '''# GRÁFICO
-        plt.style.use('seaborn')
-        sns.set_style('white')
-        plt.figure(figsize=(11, 5))
-        plt.plot(posse_de_bola['Tempo_Fim'], posse_de_bola['dif_casa'], color='black')
-        plt.title('Diferença do Placar Casa Durante a Partida', fontsize=12)
-        plt.ylabel('Diferença do Placar', fontsize=10)
-        plt.xlabel('Tempo de Jogo em Segundos', fontsize=10)
-        plt.yticks(fontsize=10)
-        plt.xticks(fontsize=10)
-        final_t = []
-        final_dif = []
-        for i in segmento_dois:
-            selecao_dois = (posse_de_bola['Tempo_Fim'] >= i[0]) & (posse_de_bola['Tempo_Fim'] <= i[1])
-            df_filtado_dif = posse_de_bola[selecao_dois]['dif_casa']
-            df_filtado_t = posse_de_bola[selecao_dois]['Tempo_Fim']
-            plt.plot(df_filtado_t, df_filtado_dif, label='diferença do placar', color='red')
-        for x in quartos:
-            plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
-        plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
-        plt.show()'''
-
         print('Time A')
         print(len(segmento))
+        '''
+        if len(segmento) <= 2:
+            # GRÁFICO
+            plt.style.use('seaborn')
+            sns.set_style('white')
+            plt.figure(figsize=(11, 5))
+            plt.plot(posse_de_bola['Tempo_Fim'], posse_de_bola['dif_casa'], color='black')
+            plt.title('Diferença do Placar Casa Durante a Partida', fontsize=12)
+            plt.ylabel('Diferença do Placar', fontsize=10)
+            plt.xlabel('Tempo de Jogo em Segundos', fontsize=10)
+            plt.yticks(fontsize=10)
+            plt.xticks(fontsize=10)
+            final_t = []
+            final_dif = []
+            for i in segmento:
+                selecao = (posse_de_bola['Tempo_Fim'] >= i[0]) & (posse_de_bola['Tempo_Fim'] <= i[1])
+                df_filtado_dif = posse_de_bola[selecao]['dif_casa']
+                df_filtado_t = posse_de_bola[selecao]['Tempo_Fim']
+                plt.plot(df_filtado_t, df_filtado_dif, color='red')
+            for x in quartos:
+                plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
+            plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
+            plt.show()'''
+        # Time B
+        del segmento_dois[0]
         print('Time B')
         print(len(segmento_dois))
-
+        '''
+        if len(segmento_dois) <= 2:
+            # GRÁFICO
+            plt.style.use('seaborn')
+            sns.set_style('white')
+            plt.figure(figsize=(11, 5))
+            plt.plot(posse_de_bola['Tempo_Fim'], posse_de_bola['dif_casa'], color='black')
+            plt.title('Diferença do Placar Casa Durante a Partida', fontsize=12)
+            plt.ylabel('Diferença do Placar', fontsize=10)
+            plt.xlabel('Tempo de Jogo em Segundos', fontsize=10)
+            plt.yticks(fontsize=10)
+            plt.xticks(fontsize=10)
+            final_t = []
+            final_dif = []
+            for i in segmento_dois:
+                selecao_dois = (posse_de_bola['Tempo_Fim'] >= i[0]) & (posse_de_bola['Tempo_Fim'] <= i[1])
+                df_filtado_dif = posse_de_bola[selecao_dois]['dif_casa']
+                df_filtado_t = posse_de_bola[selecao_dois]['Tempo_Fim']
+                plt.plot(df_filtado_t, df_filtado_dif, label='diferença do placar', color='red')
+            for x in quartos:
+                plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
+            plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
+            plt.show()'''
         #################################################################################################
         # Tabela de dados gerais
         Tabela_Geral = df[['Time', 'Indicador', 'Nome']]
@@ -544,6 +547,21 @@ for k in ANOS:
         tabela_times['Tempo_de_posse'] = [contagem['Tempo_de_posse'][0],
                                           contagem['Tempo_de_posse'][1]]
 
+        tabela_times['Data'] = ['nan', 'nan']
+        tabela_times['Semana'] = ['nan', 'nan']
+        tabela_times['Classificatoria/Playoffs'] = ['nan', 'nan']
+        ########################################################################################################
+        for j in files_tabela_csv:
+            arquivo_tabela_time = j.replace(f'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados/temporada 20{k}', '')
+            if arquivo_time == arquivo_tabela_time:
+                print('sim')
+                df_tabela = pd.read_csv(j)
+                tabela_times['Data'] = [df_tabela['Data'][1], df_tabela['Data'][1]]
+                tabela_times['Semana'] = [df_tabela['Semana'][1], df_tabela['Semana'][1]]
+                tabela_times['Classificatoria/Playoffs'] = [df_tabela['Classificatoria/Playoffs'][1],
+                                                            df_tabela['Classificatoria/Playoffs'][1]]
+            else:
+                pass
         # Dataframe para o Aprendizado
         aprendizado = aprendizado.append(tabela_times, ignore_index=True)
         ########################################################################################################

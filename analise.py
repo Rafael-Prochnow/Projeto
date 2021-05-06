@@ -8,7 +8,7 @@ from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo
     acrescentar_valores_gerais, criando_dataframe_times, criando_analise_avancada_times
 
 aprendizado = pd.DataFrame([])
-arquivo = ".csv"
+arquivo = "tabela_1_VipTech CMB_x_Fortaleza B.csv"
 df = pd.read_csv(arquivo)
 
 expressao_regular = re.findall(r'[A-Z].*?[.]', arquivo)
@@ -27,7 +27,7 @@ print(nome_time_fora)
 casa = 'casa'
 fora = 'fora'
 classificatoria = '1 Turno'
-temporada = 2019
+temporada = '2020'
 data_hoje = datetime.today().strftime('%d/%m/%Y')
 dia_do_jogo = '02/01/2021'
 sigla_time_a = siglas(nome_time_casa, temporada)
@@ -97,7 +97,7 @@ df_time_a, df_time_b = resultado_da_posse_de_bola(posse_bola, sigla_time_a, sigl
 # Formula que junta as posses de bolas de cada time
 posse_de_bola = juntar_posses(df_time_a, df_time_b)
 
-'''# Análises da posse de bola
+# Análises da posse de bola
 lu_time_a = posse_de_bola
 lu_time_a['Time_Novo'] = 0
 
@@ -367,7 +367,6 @@ else:
 # Time A
 del segmento[0]
 
-
 # GRÁFICO
 plt.style.use('seaborn')
 sns.set_style('white')
@@ -522,9 +521,9 @@ tabela_times['Tempo_de_posse'] = [contagem['Tempo_de_posse'][0],
 
 aprendizado = aprendizado.append(tabela_times, ignore_index=True)
 ##################################################################################################################
-'''
+
 '''# Análise Avançada
 analise = criando_analise_avancada_times(Tabela_Final)'''
 ##################################################################################################################
 
-# aprendizado.to_csv('ex1.csv')
+aprendizado.to_csv('ex1.csv')
