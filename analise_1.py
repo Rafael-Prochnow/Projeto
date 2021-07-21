@@ -5,31 +5,38 @@ import re
 from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo, resultado_da_posse_de_bola, \
     juntar_posses, acrescentar_indicadores, par_impar, periodo_potencial, identificardor_periodo_positivo, \
     acrescentar_valores_gerais, criando_dataframe_times
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # ANOS = [20, 19, 18, 17, 16, 15, 14, 13]
-ANOS = [20]
+ANOS = [17]
 aprendizado = pd.DataFrame([])
 
 for k in ANOS:
+    # Localizando na pasta os jogos contendo Jogada-Jogada do NBB retirados do Web Scraping
     path = fr'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 20{k}'
     files = os.listdir(path)
     files_csv = [path + '\\' + f for f in files if f[-3:] == 'csv']
-    # files_csv = sorted(files_csv, key=len)
-    # print(files_csv)
+    # Aquivos desnecessários para a análise
+    tirar = {path + fr'\falha_20{k}.csv', path + fr'\funcionando_20{k}.csv',
+             path + fr'\Total_de_acao_acao_20{k}.csv'}
+    files_csv = [elem for elem in files_csv if elem not in tirar]
+
+    # Localizando na pasta os jogos contendo a Tabela do NBB retirados do Web Scraping
     path_tabela = fr'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados/temporada 20{k}'
     files_tabela = os.listdir(path_tabela)
     files_tabela_csv = [path_tabela + '\\' + f for f in files_tabela if f[-3:] == 'csv']
+    # Arquivos desnecessários para a análise
+    tirar_tabela = {path_tabela + fr'\falha_20{k}.csv', path_tabela + fr'\funcionando_20{k}.csv',
+                    path_tabela + fr'\Total_de_Tabela_20{k}.csv'}
+    files_tabela_csv = [elem for elem in files_tabela_csv if elem not in tirar_tabela]
 
     aaa = 1
     for f in files_csv:
-        print(f'Número da partida {aaa}')
+        # print(f'Número da partida {aaa}')
         aaa += 1
         print(f)
         df = pd.read_csv(f)
         arquivo_time = f.replace(f'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 20{k}', '')
-        arquivo_time = arquivo_time.replace('. C.', '')
+        print(arquivo_time)
         expressao_regular = re.findall(r'[A-Z].*?[.]', arquivo_time)[0]
         expressao_regular = expressao_regular.replace('.', '')
         expressao_regular1 = expressao_regular.split('_x_')
@@ -42,8 +49,8 @@ for k in ANOS:
         data_hoje = datetime.today().strftime('%d/%m/%Y')
         dia_do_jogo = f'{aaa}/01/20{k}'
         temporada = f'20{k}'
-        sigla_time_a = siglas(nome_time_casa, temporada)
-        sigla_time_b = siglas(nome_time_fora, temporada)
+        sigla_time_a = siglas(nome_time_casa)
+        sigla_time_b = siglas(nome_time_fora)
         casa = 'casa'
         fora = 'fora'
         classificatoria = '1 Turno'
@@ -395,8 +402,8 @@ for k in ANOS:
 
         # Time A
         del segmento[0]
-        print('Time A')
-        print(len(segmento))
+        # print('Time A')
+        # print(len(segmento))
         '''
         if len(segmento) <= 2:
             # GRÁFICO
@@ -422,8 +429,8 @@ for k in ANOS:
             plt.show()'''
         # Time B
         del segmento_dois[0]
-        print('Time B')
-        print(len(segmento_dois))
+        # print('Time B')
+        # print(len(segmento_dois))
         '''
         if len(segmento_dois) <= 2:
             # GRÁFICO

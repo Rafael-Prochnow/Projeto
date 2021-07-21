@@ -7,10 +7,10 @@ import numpy as np
 # corresponde as siglas de cada jogo
 
 
-def siglas(nome_time, temporada):
+def siglas(nome_time):
     if nome_time == 'Bauru':
         return 'BAU'
-    elif nome_time == 'Mogi':
+    elif nome_time == 'Mogi das Cruzes':
         return 'MOG'
     elif nome_time == 'VipTech CMB':
         return 'CMO'
@@ -34,7 +34,6 @@ def siglas(nome_time, temporada):
         return 'PAT'
     elif nome_time == 'São Paulo':
         return 'SPF'
-    #####################################
     elif nome_time == 'Rio Claro':
         return 'RCB'
     elif nome_time == 'São José':
@@ -53,7 +52,7 @@ def siglas(nome_time, temporada):
         return 'LIM'
     elif nome_time == 'Vitória':
         return 'VIT'
-    elif nome_time == 'L Sorocabana':
+    elif nome_time == 'Liga Sorocabana':
         return 'LSB'
     elif nome_time == 'Caxias do Sul':
         return 'CAX'
@@ -63,22 +62,12 @@ def siglas(nome_time, temporada):
         return 'ESB'
     elif nome_time == 'Goiânia':
         return 'GOI'
-    #######################################################
     elif nome_time == 'Brasília':
-        if (temporada == '2020') | (temporada == '2019'):
-            return 'BSB'
-        else:
-            return 'BRA'
-    elif nome_time == 'Fortaleza B':
-        if temporada == '2020':
-            return 'FOR'
-        else:
-            return 'CEA'
+        return 'BRA'
+    elif nome_time == 'Fortaleza Basquete':
+        return 'CEA'
     elif nome_time == 'Paulistano':
-        if (temporada == '2015') | (temporada == '2014') | (temporada == '2013'):
-            return 'PAU'
-        else:
-            return 'CAP'
+        return 'CAP'
 
 
 def limpeza_tempo(df):
@@ -328,40 +317,40 @@ def acrescentar_valores_gerais(Tabela_Geral_Time1, nome_time_casa, nome_time_for
 
     tamanho_df_pivot = len(tabela_time1_pivot)
     if 'TO' not in valores_coluna_time1:
-        toco = [0 for itens in range(tamanho_df_pivot)]
+        toco = [0 for _ in range(tamanho_df_pivot)]
         tabela_time1_pivot['TO'] = toco
     if 'FC_O' not in valores_coluna_time1:
-        fco = [0 for itens in range(tamanho_df_pivot)]
+        fco = [0 for _ in range(tamanho_df_pivot)]
         tabela_time1_pivot['FC_O'] = fco
     if 'FC_T' not in valores_coluna_time1:
-        fct = [0 for itens in range(tamanho_df_pivot)]
+        fct = [0 for _ in range(tamanho_df_pivot)]
         tabela_time1_pivot['FC_T'] = fct
     if 'FC_A' not in valores_coluna_time1:
-        fca = [0 for itens in range(tamanho_df_pivot)]
+        fca = [0 for _ in range(tamanho_df_pivot)]
         tabela_time1_pivot['FC_A'] = fca
     if 'EN' not in valores_coluna_time1:
-        en = [0 for itens in range(tamanho_df_pivot)]
+        en = [0 for _ in range(tamanho_df_pivot)]
         tabela_time1_pivot['EN'] = en
     if 'LL_Pts_C' not in valores_coluna_time1:
-        llc = [0 for itens in range(tamanho_df_pivot)]
+        llc = [0 for _ in range(tamanho_df_pivot)]
         tabela_time1_pivot['LL_Pts_C'] = llc
     if 'LL_Pts_T' not in valores_coluna_time1:
-        llt = [0 for itens in range(tamanho_df_pivot)]
+        llt = [0 for _ in range(tamanho_df_pivot)]
         tabela_time1_pivot['LL_Pts_T'] = llt
 
-    nome_time_casa0 = [nome_time_casa for itens in range(tamanho_df_pivot)]
+    nome_time_casa0 = [nome_time_casa for _ in range(tamanho_df_pivot)]
     tabela_time1_pivot['Time'] = nome_time_casa0
 
-    nome_time_fora0 = [nome_time_fora for itens in range(tamanho_df_pivot)]
+    nome_time_fora0 = [nome_time_fora for _ in range(tamanho_df_pivot)]
     tabela_time1_pivot['Oponente'] = nome_time_fora0
 
-    dia_do_jogo0 = [dia_do_jogo for itens in range(tamanho_df_pivot)]
+    dia_do_jogo0 = [dia_do_jogo for _ in range(tamanho_df_pivot)]
     tabela_time1_pivot['Data'] = dia_do_jogo0
 
-    casa0 = [casa for itens in range(tamanho_df_pivot)]
+    casa0 = [casa for _ in range(tamanho_df_pivot)]
     tabela_time1_pivot['Casa/Fora'] = casa0
 
-    classificatoria0 = [classificatoria for itens in range(tamanho_df_pivot)]
+    classificatoria0 = [classificatoria for _ in range(tamanho_df_pivot)]
     tabela_time1_pivot['Classificatoria/Playoffs'] = classificatoria0
     tabela_time1_pivot.reset_index(inplace=True)
     tabela_time1_pivot.drop(['level_0'], axis=1, inplace=True)
@@ -389,8 +378,8 @@ def criando_dataframe_times(tabela_time1_pivot, nome_time_casa):
     Time1_Final['AS'] = tabela_time1_pivot['AS']
     Time1_Final['BR'] = tabela_time1_pivot['BR']
     Time1_Final['TO'] = tabela_time1_pivot['TO']
-    Time1_Final['FC'] = tabela_time1_pivot['FC'] + tabela_time1_pivot['FC_T'] + tabela_time1_pivot['FC_O'] + \
-                        tabela_time1_pivot['FC_A']
+    Time1_Final['FC'] = tabela_time1_pivot['FC'] + tabela_time1_pivot['FC_T'] + tabela_time1_pivot[
+        'FC_O'] + tabela_time1_pivot['FC_A']
     Time1_Final['FR'] = tabela_time1_pivot['FR']
     Time1_Final['ER'] = tabela_time1_pivot['ER']
     Time1_Final['EN'] = tabela_time1_pivot['EN']
@@ -398,7 +387,7 @@ def criando_dataframe_times(tabela_time1_pivot, nome_time_casa):
     Time1_Final['substituicao_sai'] = tabela_time1_pivot['substituicao_sai']
 
     Time1_Final['Ar_Pts_C'] = (Time1_Final['Pts_3_C'] / 3) + (Time1_Final['Pts_2_C'] / 2) - (
-                Time1_Final['EN'] / 2)  # por o teste3['Pts_2_C'] contabiliza EN
+            Time1_Final['EN'] / 2)  # por o teste3['Pts_2_C'] contabiliza EN
     Time1_Final['Ar_Pts_T'] = (Time1_Final['Pts_3_T'] / 3) + (Time1_Final['Pts_2_T'] / 2)  # NÃO contabiliza EN
     Time1_Final['Pts_C'] = Time1_Final['Pts_3_C'] + Time1_Final['Pts_2_C'] + Time1_Final['LL_C'] + Time1_Final['EN']
     Time1_Final['Pts_T'] = Time1_Final['Pts_3_T'] + Time1_Final['Pts_2_T'] + Time1_Final['LL_T']
@@ -455,6 +444,3 @@ def criando_analise_avancada_times(Tabela_Final):
                                       3)  # assistências por posse de bola
     analise.reset_index(drop=True, inplace=True)
     return analise
-
-
-
