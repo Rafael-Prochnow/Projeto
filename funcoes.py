@@ -337,6 +337,9 @@ def acrescentar_valores_gerais(Tabela_Geral_Time1, nome_time_casa, nome_time_for
     if 'LL_Pts_T' not in valores_coluna_time1:
         llt = [0 for _ in range(tamanho_df_pivot)]
         tabela_time1_pivot['LL_Pts_T'] = llt
+    if 'BR' not in valores_coluna_time1:
+        br = [0 for itens in range(tamanho_df_pivot)]
+        tabela_time1_pivot['LL_Pts_T'] = br
 
     nome_time_casa0 = [nome_time_casa for _ in range(tamanho_df_pivot)]
     tabela_time1_pivot['Time'] = nome_time_casa0
@@ -386,61 +389,55 @@ def criando_dataframe_times(tabela_time1_pivot, nome_time_casa):
     Time1_Final['substituicao_entra'] = tabela_time1_pivot['substituicao_entra']
     Time1_Final['substituicao_sai'] = tabela_time1_pivot['substituicao_sai']
 
-    Time1_Final['Ar_Pts_C'] = (Time1_Final['Pts_3_C'] / 3) + (Time1_Final['Pts_2_C'] / 2) - (
-            Time1_Final['EN'] / 2)  # por o teste3['Pts_2_C'] contabiliza EN
+    Time1_Final['Ar_Pts_C'] = (Time1_Final['Pts_3_C'] / 3) + (Time1_Final['Pts_2_C'] / 2) - Time1_Final[
+        'EN']  # por o teste3['Pts_2_C'] contabiliza EN
     Time1_Final['Ar_Pts_T'] = (Time1_Final['Pts_3_T'] / 3) + (Time1_Final['Pts_2_T'] / 2)  # NÃO contabiliza EN
-    Time1_Final['Pts_C'] = Time1_Final['Pts_3_C'] + Time1_Final['Pts_2_C'] + Time1_Final['LL_C'] + Time1_Final['EN']
+    Time1_Final['Pts_C'] = Time1_Final['Pts_3_C'] + Time1_Final['Pts_2_C'] + Time1_Final['LL_C']
     Time1_Final['Pts_T'] = Time1_Final['Pts_3_T'] + Time1_Final['Pts_2_T'] + Time1_Final['LL_T']
-    # mudar os nomes para ações coletivas
-    Time1_Final = Time1_Final[(Time1_Final['Nome'] != nome_time_casa)]
     Time1_Final['posse_de_bola_Oliver'] = round(
         Time1_Final['Ar_Pts_T'] - Time1_Final['RO'] + Time1_Final['ER'] + (0.4 * Time1_Final['LL_T']), 0)
+    # Deixar em ordem decrescente na pontuação
+    Time1_Final.sort_values(by=['Pts_C'], inplace=True, ascending=False)
     return Time1_Final
 
 
-def criando_analise_avancada_times(Tabela_Final):
-    analise = pd.DataFrame()
-    analise['Time'] = Tabela_Final['Time']
-    analise['Oponente'] = Tabela_Final['Oponente']
-    analise['Data'] = Tabela_Final['Data']
-    analise['Casa/Fora'] = Tabela_Final['Casa/Fora']
-    analise['Classificatoria/Playoffs'] = Tabela_Final['Classificatoria/Playoffs']
-    analise['Nome'] = Tabela_Final['Nome']  # Jogadores
-    analise['EF_Pts'] = round(Tabela_Final['Pts_C'] / Tabela_Final['Pts_T'], 3)  # eficiência dos pontos totais
-    analise['FR_3_Pts_C'] = round((Tabela_Final['Pts_3_C'] * 3) / Tabela_Final['Pts_C'],
-                                  3)  # frequência relativa do 3 pontos convertidos
-    analise['FR_3_Pts_T'] = round((Tabela_Final['Pts_3_T'] * 3) / Tabela_Final['Pts_T'],
-                                  3)  # frequência relativa do 3 pontos tentados
-    analise['EF_Pts_3'] = round(Tabela_Final['Pts_3_C'] / Tabela_Final['Pts_3_T'], 3)  # eficiência dos 3 pontos
-    analise['FR_2_Pts_C'] = round((Tabela_Final['Pts_2_C'] * 2) / Tabela_Final['Pts_C'],
-                                  3)  # frequência relativa do 2 pontos convertidos
-    analise['FR_2_Pts_T'] = round((Tabela_Final['Pts_2_T'] * 2) / Tabela_Final['Pts_T'],
-                                  3)  # frequência relativa do 2 pontos tentados
-    analise['EF_Pts_2'] = round(Tabela_Final['Pts_2_C'] / Tabela_Final['Pts_2_T'], 3)  # eficiência dos 2 pontos
-    analise['FR_LL_C'] = round(Tabela_Final['LL_C'] / Tabela_Final['Pts_C'],
-                               3)  # frequência relativa dos Lances Livres convertidos
-    analise['FR_LL_T'] = round(Tabela_Final['LL_T'] / Tabela_Final['Pts_T'],
-                               3)  # frequência relativa dos Lances Livres tentados
-    analise['EF_LL'] = round(Tabela_Final['LL_C'] / Tabela_Final['LL_T'], 3)  # eficiência dos Lances Livres
-    # analise['Pace']
+def criando_analise_avancada_geral(Tabela_Final):
+    Tabela_Final['EF_Pts'] = round(Tabela_Final['Pts_C'] / Tabela_Final['Pts_T'], 3)  # eficiência dos pontos totais
+    Tabela_Final['EF_Pts_3'] = round(Tabela_Final['Pts_3_C'] / Tabela_Final['Pts_3_T'], 3)  # eficiência dos 3 pontos
+    Tabela_Final['EF_Pts_2'] = round(Tabela_Final['Pts_2_C'] / Tabela_Final['Pts_2_T'], 3)  # eficiência dos 2 pontos
+    Tabela_Final['EF_LL'] = round(Tabela_Final['LL_C'] / Tabela_Final['LL_T'], 3)  # eficiência dos Lances Livres
+    Tabela_Final.fillna(0, inplace=True)
+
+
+def criando_analise_avancada_time(Tabela_Final):
     # four fectores
-    analise['eFG_%'] = round((Tabela_Final['Ar_Pts_C'] + 0.5 * Tabela_Final['Pts_3_C']) / Tabela_Final['Ar_Pts_T'],
-                             3)  # aproveitamento efetivo
-    analise['TOV_%'] = round(
+    Tabela_Final['eFG_%'] = round((Tabela_Final['Ar_Pts_C'] + 0.5 * Tabela_Final['Pts_3_C']) / Tabela_Final['Ar_Pts_T'],
+                                  3)  # aproveitamento efetivo
+    Tabela_Final['TOV_%'] = round(
         100 * Tabela_Final['ER'] / (Tabela_Final['Ar_Pts_T'] + 0.475 * Tabela_Final['LL_T'] + Tabela_Final['ER']),
         1)  # fator turnover
-    analise['FTA/FGA'] = round(Tabela_Final['LL_T'] / Tabela_Final['Ar_Pts_C'],
-                               3)  # fator de aproveitamento dos lances livres
+    Tabela_Final['FTA/FGA'] = round(Tabela_Final['LL_T'] / Tabela_Final['Ar_Pts_C'],
+                                    3)  # fator de aproveitamento dos lances livres
     # analise['ORB%'] =  # precisa do resultado do time adv
+    Tabela_Final['Offensive_Rating'] = 100 * round(Tabela_Final['Pts_C'] / Tabela_Final['posse_de_bola'],
+                                                   3)  # pontos por posse de bola com o ajusto de 100 posses
 
-    analise['Posse_de_Bola'] = Tabela_Final['posse_de_bola']  # posse de bola
-    analise['Offensive_Rating'] = 100 * round(Tabela_Final['Pts_C'] / Tabela_Final['posse_de_bola'],
-                                              3)  # pontos por posse de bola com o ajusto de 100 posses
+    Tabela_Final['TS_%'] = round(
+        Tabela_Final['Pts_C'] / (2 * (Tabela_Final['Ar_Pts_T'] + 0.475 * Tabela_Final['LL_T'])),
+        3)  # porcentagem dos arremessos
+    Tabela_Final['Ass/ER'] = round(Tabela_Final['AS'] / Tabela_Final['ER'], 3)  # assistência por erros
+    Tabela_Final['AS_Ratio'] = 100 * round((Tabela_Final['AS'] / Tabela_Final['posse_de_bola']),
+                                           3)  # assistências por posse de bola
+    Tabela_Final.fillna(0, inplace=True)
 
-    analise['TS_%'] = round(Tabela_Final['Pts_C'] / (2 * (Tabela_Final['Ar_Pts_T'] + 0.475 * Tabela_Final['LL_T'])),
-                            3)  # porcentagem dos arremessos
-    analise['Ass/ER'] = round(Tabela_Final['AS'] / Tabela_Final['ER'], 3)  # assistência por erros
-    analise['AS_Ratio'] = 100 * round((Tabela_Final['AS'] / Tabela_Final['posse_de_bola']),
-                                      3)  # assistências por posse de bola
-    analise.reset_index(drop=True, inplace=True)
-    return analise
+
+def frequencia_relativa(Time1_Final):
+    indicadores = ['Pts_3_C', 'Pts_3_T', 'Pts_2_C', 'Pts_2_T', 'LL_C', 'LL_T',
+                   'RO', 'RD', 'RT', 'AS', 'BR', 'TO', 'FC', 'FR', 'ER', 'EN',
+                   'Pts_C', 'Pts_T']
+    t = len(Time1_Final)
+    for i in indicadores:
+        resultado = []
+        for j in range(t):
+            resultado.append(round(Time1_Final[i][j] / Time1_Final[i][t - 1], 3))
+        Time1_Final[f'FR_{i}'] = resultado

@@ -1,38 +1,40 @@
-import pandas as pd
-import re
-from datetime import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
+import dataframe_image as dfi
+import pandas as pd
+from datetime import datetime
+import re
 from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo, resultado_da_posse_de_bola,\
     juntar_posses, acrescentar_indicadores, par_impar, periodo_potencial, identificardor_periodo_positivo, \
-    acrescentar_valores_gerais, criando_dataframe_times, criando_analise_avancada_times
+    acrescentar_valores_gerais, criando_dataframe_times, criando_analise_avancada_geral, \
+    criando_analise_avancada_time, frequencia_relativa
 
-aprendizado = pd.DataFrame([])
-arquivo = "tabela_1_VipTech CMB_x_Fortaleza B.csv"
-df = pd.read_csv(arquivo)
 
-expressao_regular = re.findall(r'[A-Z].*?[.]', arquivo)
-expressao_regular = str(expressao_regular).strip('[]')
-expressao_regular0 = expressao_regular.split('_x_')
+# Informações para o relatório
+k = 17
+arquivo_time = 'tabela_1_Bauru_x_Paulistano.csv'
+dia_do_jogo = f'12/01/20{k}'
+temporada = f'20{k}'
+classificatoria = '1 Turno'
+############################################################################################
+# Encontrar dadados
+df = pd.read_csv(fr'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 20{k}' +
+                 f'\\{arquivo_time}', index_col=0)
 
-# criar um df que identifique o Mogi e colocar mogi das cruzes
-casa = expressao_regular0[0]
-nome_time_casa = casa.replace("'", "")
-fora = expressao_regular0[1]
-nome_time_fora = fora.replace(".'", "")
+# Separa os nomes dos times da casa e de fora
+expressao_regular = re.findall(r'[A-Z].*?[.]', arquivo_time)[0]
+expressao_regular = str(expressao_regular).strip("['.']").split('_x_')
+nome_time_casa = expressao_regular[0]
+nome_time_fora = expressao_regular[1]
 
-print(nome_time_casa)
-print(nome_time_fora)
-# Precisa colocar algumas informações básicas sobre o jogo para que completar a tabela
+# Informações do jogo Secundárias
+data_hoje = datetime.today().strftime('%d/%m/%Y')
+sigla_time_a = siglas(nome_time_casa)
+sigla_time_b = siglas(nome_time_fora)
 casa = 'casa'
 fora = 'fora'
-classificatoria = '1 Turno'
-temporada = '2020'
-data_hoje = datetime.today().strftime('%d/%m/%Y')
-dia_do_jogo = '02/01/2021'
-sigla_time_a = siglas(nome_time_casa, temporada)
-sigla_time_b = siglas(nome_time_fora, temporada)
 
+############################################################################################
 # Limpeza dos dados
 df = limpeza_tempo(df)
 
@@ -40,9 +42,7 @@ df = limpeza_tempo(df)
 # acrescentar o tempo de cada quarto (primeiro quarto termina em 600s, o segundo quarto 2*600 = 1200 ...)
 df = transformar_segundos(df)
 
-# Acrescentado colunas
-# diferenca_placar_casa
-# diferenca_placar_visitante
+# Acrescentado colunas: diferenca_placar_casa e diferenca_placar_visitante
 df['diferenca_placar_casa'] = df['placar_casa'] - df['placar_visitante']
 df['diferenca_placar_visitante'] = df['placar_visitante'] - df['placar_casa']
 df["diferenca_placar_absoluto"] = df.loc[:, "diferenca_placar_casa"].abs()
@@ -61,22 +61,7 @@ pontuacao.reset_index(drop=True, inplace=True)
 # colocar a separação dos quartos nos gráficos
 quartos = quartos_do_jogo(df)
 
-plt.style.use('seaborn')
-sns.set_style('white')
-plt.figure(figsize=(9, 5))
-tempo = pontuacao['Tempo']
-pontuacao1 = pontuacao['placar_casa']
-pontuacao2 = pontuacao['placar_visitante']
-plt.plot(tempo, pontuacao1, label='placar_casa')
-plt.plot(tempo, pontuacao2, label='placar_visitante')
-plt.legend(loc='upper left', bbox_to_anchor=(1, 1), prop={'size': 14})
-for x in quartos:
-    plt.axvline(x, color='red', label=pontuacao.index, linestyle='--', alpha=0.4)
-plt.title('Gráfico do Placar Acumulativo do Jogo', fontsize=18)
-plt.ylabel('Pontos')
-plt.xlabel('Segundos')
-plt.tight_layout()
-plt.show()
+#Gráfico 1
 
 # Análise da Posse de Bola dos times
 posse_bola = df[(df['Indicador'] == '3_Pts_C') | (df['Indicador'] == '3_Pts_T') |
@@ -88,8 +73,6 @@ posse_bola = df[(df['Indicador'] == '3_Pts_C') | (df['Indicador'] == '3_Pts_T') 
 # estamos invertendo os valores para deixar parecido com o jogo
 posse_bola = posse_bola[::-1]
 posse_bola.reset_index(drop=True, inplace=True)
-print(sigla_time_a)
-print(sigla_time_b)
 
 # Formula que descobre a posse de bola de cada time
 df_time_a, df_time_b = resultado_da_posse_de_bola(posse_bola, sigla_time_a, sigla_time_b)
@@ -114,20 +97,7 @@ x = grafico_posse_time1['index']
 my_xticks = x
 frequency = 10
 
-plt.style.use('seaborn')
-sns.set_style('white')
-plt.figure(figsize=(11, 5))
-sns.barplot(x='index', y='Time_Novo', data=grafico_posse_time1, color='black')
-plt.title(f'Ataques do {nome_time_casa} no jogo', fontsize=20)
-plt.yticks([5, 10, 14, 24], fontsize=16)
-plt.ylabel('Tempo', fontsize=16)
-plt.xlabel('Ataques', fontsize=16)
-plt.xticks(x[::frequency], my_xticks[::frequency], fontsize=14)
-valores = [24, 14, 10, 5]
-for i in valores:
-    plt.axhline(i, color='red', alpha=0.6, label=f'{i} segundos')
-# plt.legend(loc='upper right', bbox_to_anchor=(1.1, 1), prop={'size':14})
-plt.show()
+#Gráfico 2
 
 lu_time_b = posse_de_bola
 lu_time_b['Time_Novo'] = 0
@@ -144,20 +114,7 @@ x2 = grafico_posse_time2['index']
 my_xticks2 = x2
 frequency2 = 10
 
-plt.style.use('seaborn')
-sns.set_style('white')
-plt.figure(figsize=(11, 5))
-sns.barplot(x='index', y='Time_Novo', data=grafico_posse_time2, color='black')
-plt.title(f'Ataques do {nome_time_fora} no jogo', fontsize=20)
-plt.yticks([5, 10, 14, 24], fontsize=16)
-plt.ylabel('Tempo', fontsize=16)
-plt.xlabel('Ataques', fontsize=16)
-plt.xticks(x2[::frequency2], my_xticks2[::frequency2], fontsize=14)
-valores = [24, 14, 10, 5]
-for i in valores:
-    plt.axhline(i, color='red', alpha=0.6, label=f'{i} segundos')
-# plt.legend(loc='upper right', bbox_to_anchor=(1.1, 1), prop={'size':14})
-plt.show()
+#Gráfico 3
 
 # Análises descritiva da posse de bola
 
@@ -182,16 +139,23 @@ contagem['3_Pts_T'] = contagem['3_Pts_C'] + contagem['3_Pts_E']
 contagem['LL_Pts_T'] = contagem['LL_Pts_C'] + contagem['LL_Pts_E']
 contagem['Time'] = [sigla_time_a, sigla_time_b]
 contagem['posse'] = [soma_a, soma_b]
-contagem['%2_Pts_C'] = [round((contagem['2_Pts_C'][0]/soma_a)*100), round((contagem['2_Pts_C'][1]/soma_b)*100)]
-contagem['%2_Pts_E'] = [round((contagem['2_Pts_E'][0]/soma_a)*100), round((contagem['2_Pts_E'][1]/soma_b)*100)]
-contagem['%3_Pts_C'] = [round((contagem['3_Pts_C'][0]/soma_a)*100), round((contagem['3_Pts_C'][1]/soma_b)*100)]
-contagem['%3_Pts_E'] = [round((contagem['3_Pts_E'][0]/soma_a)*100), round((contagem['3_Pts_E'][1]/soma_b)*100)]
-contagem['%LL_Pts_C'] = [round((contagem['LL_Pts_C'][0]/soma_a)*100), round((contagem['LL_Pts_C'][1]/soma_b)*100)]
-contagem['%LL_Pts_E'] = [round((contagem['LL_Pts_E'][0]/soma_a)*100), round((contagem['LL_Pts_E'][1]/soma_b)*100)]
-contagem['Tempo_de_posse'] = [(round(posse_de_bola.loc[posse_de_bola['Time'] == sigla_time_a].Tempo.sum()/60)),
-                              (round(posse_de_bola.loc[posse_de_bola['Time'] == sigla_time_b].Tempo.sum()/60))]
-contagem['Ataques/min'] = [(round(contagem['posse'][0]/contagem['Tempo_de_posse'][0], 2)),
-                           (round(contagem['posse'][1]/contagem['Tempo_de_posse'][1], 2))]
+contagem['%2_Pts_C'] = [round((contagem['2_Pts_C'][0] / soma_a) * 100),
+                        round((contagem['2_Pts_C'][1] / soma_b) * 100)]
+contagem['%2_Pts_E'] = [round((contagem['2_Pts_E'][0] / soma_a) * 100),
+                        round((contagem['2_Pts_E'][1] / soma_b) * 100)]
+contagem['%3_Pts_C'] = [round((contagem['3_Pts_C'][0] / soma_a) * 100),
+                        round((contagem['3_Pts_C'][1] / soma_b) * 100)]
+contagem['%3_Pts_E'] = [round((contagem['3_Pts_E'][0] / soma_a) * 100),
+                        round((contagem['3_Pts_E'][1] / soma_b) * 100)]
+contagem['%LL_Pts_C'] = [round((contagem['LL_Pts_C'][0] / soma_a) * 100),
+                         round((contagem['LL_Pts_C'][1] / soma_b) * 100)]
+contagem['%LL_Pts_E'] = [round((contagem['LL_Pts_E'][0] / soma_a) * 100),
+                         round((contagem['LL_Pts_E'][1] / soma_b) * 100)]
+contagem['Tempo_de_posse'] = [
+    (round(posse_de_bola.loc[posse_de_bola['Time'] == sigla_time_a].Tempo.sum() / 60)),
+    (round(posse_de_bola.loc[posse_de_bola['Time'] == sigla_time_b].Tempo.sum() / 60))]
+contagem['Ataques/min'] = [(round(contagem['posse'][0] / contagem['Tempo_de_posse'][0], 2)),
+                           (round(contagem['posse'][1] / contagem['Tempo_de_posse'][1], 2))]
 
 contagem = contagem[['Time', 'posse', 'Tempo_de_posse', 'Ataques/min',
                      '2_Pts_C', '2_Pts_E', '2_Pts_T',
@@ -222,28 +186,14 @@ valores_a.update(valores_b)
 tempos = ('<=5', '>5<=10', '>10<=14', '>14<=24', '>24')
 ataques = pd.DataFrame(data=valores_a, index=tempos)
 
-#  Gráfico da diferença da placar
-plt.style.use('seaborn')
-sns.set_style('white')
-plt.figure(figsize=(11, 5))
-plt.plot(posse_de_bola['Tempo_Fim'], posse_de_bola['dif_casa'], color='black')
-plt.title('Diferença do Placar Casa Durante a Partida', fontsize=10)
-plt.ylabel('Diferença do Placar', fontsize=10)
-plt.xlabel('Tempo de Jogo em Segundos', fontsize=10)
-plt.yticks(fontsize=10)
-plt.xticks(fontsize=10)
-# plt.legend(loc='upper left', bbox_to_anchor=(1, 1), prop={'size':14})
-for x in quartos:
-    plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
-plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
-plt.show()
+#Gráfico 4
 
 # Analisar os períodos positivos dos times
 # Utilizando a diferença do placar entre casa e visitante, aplicando diff (diferença entre as linhas)
 # e usando seu valor absoluto (abs())
 # nós podemos encontrar o valor de cada indicador técnico
 posse_de_bola["pontuacao"] = posse_de_bola["dif_casa"].diff()
-posse_de_bola["pontuacao"] = posse_de_bola["pontuacao"].apply(lambda x: abs(x))
+posse_de_bola["pontuacao"] = posse_de_bola["pontuacao"].apply(lambda x4: abs(x4))
 # como o primeiro valor some quando fazemos a diff e esse primeiro valor é importante
 # pq é o primeiro ponto, nós adicionamos ele
 novo_valor = posse_de_bola["dif_casa"][0]
@@ -286,12 +236,14 @@ if segunda_posse == sigla_time_a:
     for i in periodo_positivo:
         if i[0] == 0:
             positivo_inicio_time_b.append(posse_bola_um.loc[i[0], 'Tempo_Fim'])
-            positivo_fim_time_b.append(posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento_dois.append([posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
+            positivo_fim_time_b.append(posse_bola_um.loc[i[len(i) - 1], 'Tempo_Fim'])
+            segmento_dois.append(
+                [posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_um.loc[i[len(i) - 1], 'Tempo_Fim']])
         else:
-            positivo_inicio_time_b.append(posse_bola_um.loc[i[0]-1, 'Tempo_Fim'])
-            positivo_fim_time_b.append(posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento_dois.append([posse_bola_um.loc[i[0]-1, 'Tempo_Fim'], posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
+            positivo_inicio_time_b.append(posse_bola_um.loc[i[0] - 1, 'Tempo_Fim'])
+            positivo_fim_time_b.append(posse_bola_um.loc[i[len(i) - 1], 'Tempo_Fim'])
+            segmento_dois.append(
+                [posse_bola_um.loc[i[0] - 1, 'Tempo_Fim'], posse_bola_um.loc[i[len(i) - 1], 'Tempo_Fim']])
     # print('Time B')
     # print(positivo_inicio_time_b)
     # print(positivo_fim_time_b)
@@ -301,12 +253,14 @@ else:
     for i in periodo_positivo:
         if i[0] == 0:
             positivo_inicio_time_a.append(posse_bola_um.loc[i[0], 'Tempo_Fim'])
-            positivo_fim_time_a.append(posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento.append([posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
+            positivo_fim_time_a.append(posse_bola_um.loc[i[len(i) - 1], 'Tempo_Fim'])
+            segmento.append(
+                [posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_um.loc[i[len(i) - 1], 'Tempo_Fim']])
         else:
-            positivo_inicio_time_a.append(posse_bola_um.loc[i[0]-1, 'Tempo_Fim'])
-            positivo_fim_time_a.append(posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento.append([posse_bola_um.loc[i[0]-1, 'Tempo_Fim'], posse_bola_um.loc[i[len(i)-1], 'Tempo_Fim']])
+            positivo_inicio_time_a.append(posse_bola_um.loc[i[0] - 1, 'Tempo_Fim'])
+            positivo_fim_time_a.append(posse_bola_um.loc[i[len(i) - 1], 'Tempo_Fim'])
+            segmento.append(
+                [posse_bola_um.loc[i[0] - 1, 'Tempo_Fim'], posse_bola_um.loc[i[len(i) - 1], 'Tempo_Fim']])
     # print('Time A')
     # print(positivo_inicio_time_a)
     # print(positivo_fim_time_a)
@@ -338,12 +292,14 @@ if segunda_posse_dois == sigla_time_a:
     for i in periodo_positivo_dois:
         if i[0] == 0:
             positivo_inicio_time_b.append(posse_bola_um.loc[i[0], 'Tempo_Fim'])
-            positivo_fim_time_b.append(posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento_dois.append([posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
+            positivo_fim_time_b.append(posse_bola_dois.loc[i[len(i) - 1], 'Tempo_Fim'])
+            segmento_dois.append(
+                [posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_dois.loc[i[len(i) - 1], 'Tempo_Fim']])
         else:
-            positivo_inicio_time_b.append(posse_bola_dois.loc[i[0]-1, 'Tempo_Fim'])
-            positivo_fim_time_b.append(posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento_dois.append([posse_bola_dois.loc[i[0]-1, 'Tempo_Fim'], posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
+            positivo_inicio_time_b.append(posse_bola_dois.loc[i[0] - 1, 'Tempo_Fim'])
+            positivo_fim_time_b.append(posse_bola_dois.loc[i[len(i) - 1], 'Tempo_Fim'])
+            segmento_dois.append(
+                [posse_bola_dois.loc[i[0] - 1, 'Tempo_Fim'], posse_bola_dois.loc[i[len(i) - 1], 'Tempo_Fim']])
     # print('Time B')
     # print(positivo_inicio_time_b)
     # print(positivo_fim_time_b)
@@ -353,73 +309,23 @@ else:
     for i in periodo_positivo_dois:
         if i[0] == 0:
             positivo_inicio_time_a.append(posse_bola_um.loc[i[0], 'Tempo_Fim'])
-            positivo_fim_time_a.append(posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento.append([posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
+            positivo_fim_time_a.append(posse_bola_dois.loc[i[len(i) - 1], 'Tempo_Fim'])
+            segmento.append(
+                [posse_bola_um.loc[i[0], 'Tempo_Fim'], posse_bola_dois.loc[i[len(i) - 1], 'Tempo_Fim']])
         else:
-            positivo_inicio_time_a.append(posse_bola_dois.loc[i[0]-1, 'Tempo_Fim'])
-            positivo_fim_time_a.append(posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim'])
-            segmento.append([posse_bola_dois.loc[i[0]-1, 'Tempo_Fim'], posse_bola_dois.loc[i[len(i)-1], 'Tempo_Fim']])
+            positivo_inicio_time_a.append(posse_bola_dois.loc[i[0] - 1, 'Tempo_Fim'])
+            positivo_fim_time_a.append(posse_bola_dois.loc[i[len(i) - 1], 'Tempo_Fim'])
+            segmento.append(
+                [posse_bola_dois.loc[i[0] - 1, 'Tempo_Fim'], posse_bola_dois.loc[i[len(i) - 1], 'Tempo_Fim']])
     # print('Time A')
     # print(positivo_inicio_time_a)
     # print(positivo_fim_time_a)
 
-
 # Time A
 del segmento[0]
-
-# GRÁFICO
-plt.style.use('seaborn')
-sns.set_style('white')
-plt.figure(figsize=(11, 5))
-plt.plot(posse_de_bola['Tempo_Fim'], posse_de_bola['dif_casa'], color='black')
-plt.title('Diferença do Placar Casa Durante a Partida', fontsize=12)
-plt.ylabel('Diferença do Placar', fontsize=10)
-plt.xlabel('Tempo de Jogo em Segundos', fontsize=10)
-plt.yticks(fontsize=10)
-plt.xticks(fontsize=10)
-final_t = []
-final_dif = []
-for i in segmento:
-    selecao = (posse_de_bola['Tempo_Fim'] >= i[0]) & (posse_de_bola['Tempo_Fim'] <= i[1])
-    df_filtado_dif = posse_de_bola[selecao]['dif_casa']
-    df_filtado_t = posse_de_bola[selecao]['Tempo_Fim']
-    plt.plot(df_filtado_t, df_filtado_dif, color='red')
-for x in quartos:
-    plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
-plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
-plt.show()
-
 # Time B
 del segmento_dois[0]
-
-# GRÁFICO
-plt.style.use('seaborn')
-sns.set_style('white')
-plt.figure(figsize=(11, 5))
-plt.plot(posse_de_bola['Tempo_Fim'], posse_de_bola['dif_casa'], color='black')
-plt.title('Diferença do Placar Casa Durante a Partida', fontsize=12)
-plt.ylabel('Diferença do Placar', fontsize=10)
-plt.xlabel('Tempo de Jogo em Segundos', fontsize=10)
-plt.yticks(fontsize=10)
-plt.xticks(fontsize=10)
-final_t = []
-final_dif = []
-for i in segmento_dois:
-    selecao_dois = (posse_de_bola['Tempo_Fim'] >= i[0]) & (posse_de_bola['Tempo_Fim'] <= i[1])
-    df_filtado_dif = posse_de_bola[selecao_dois]['dif_casa']
-    df_filtado_t = posse_de_bola[selecao_dois]['Tempo_Fim']
-    plt.plot(df_filtado_t, df_filtado_dif, label='diferença do placar', color='red')
-for x in quartos:
-    plt.axvline(x, color='red', label=posse_de_bola.index, linestyle='--', alpha=0.4)
-plt.axhline(0, color='orange', label=posse_de_bola.index, alpha=0.5)
-plt.show()
-
-print('Time A')
-print(len(segmento))
-print('Time B')
-print(len(segmento_dois))
-
-###################################################################################################################
+#################################################################################################
 # Tabela de dados gerais
 Tabela_Geral = df[['Time', 'Indicador', 'Nome']]
 Tabela_Geral_Time1 = Tabela_Geral[Tabela_Geral['Time'] == sigla_time_a]
@@ -458,8 +364,12 @@ resultado_Time2['Classificatoria/Playoffs'] = classificatoria
 # agregar no dataframe final
 Time1_Final = Time1_Final.append(resultado_Time1, ignore_index=True)
 Time2_Final = Time2_Final.append(resultado_Time2, ignore_index=True)
+Time1_Final['Ar_Pts_C'] = Time1_Final['Ar_Pts_C'].astype(int)
+Time1_Final['Ar_Pts_T'] = Time1_Final['Ar_Pts_T'].astype(int)
+Time2_Final['Ar_Pts_C'] = Time2_Final['Ar_Pts_C'].astype(int)
+Time2_Final['Ar_Pts_T'] = Time2_Final['Ar_Pts_T'].astype(int)
 
-# esse código é para a criação dos gráficos de comparação
+# Dados da somatórias dos indicadores técnicos apenas dos Times
 tabela_times = pd.concat([Time1_Final[Time1_Final['Nome'] == 'Equipe'],
                           Time2_Final[Time2_Final['Nome'] == 'Equipe']], ignore_index=True)
 
@@ -480,14 +390,14 @@ if dif_placar_geral[1] <= 0:
     tabela_times['Diferenca_Placar'] = resul_dif
     tabela_times['Vitoria/Derrota'] = op_1
     ################################################
-    vit_der = ['vitória' for itens in range(tamanho_df_pivot)]
+    vit_der = ['vitória' for _ in range(tamanho_df_pivot)]
     Time1_Final['Vitoria/Derrota'] = vit_der
-    dif = [positivo for itens in range(tamanho_df_pivot)]
+    dif = [positivo for _ in range(tamanho_df_pivot)]
     Time1_Final['Diferenca_Placar'] = dif
     #########################################################
-    vit_der0 = ['derrota' for itens in range(tamanho_df_pivot0)]
+    vit_der0 = ['derrota' for _ in range(tamanho_df_pivot0)]
     Time2_Final['Vitoria/Derrota'] = vit_der0
-    dif0 = [negativo for itens in range(tamanho_df_pivot0)]
+    dif0 = [negativo for _ in range(tamanho_df_pivot0)]
     Time2_Final['Diferenca_Placar'] = dif0
 else:
     positivo = dif_placar_geral[1]
@@ -506,7 +416,6 @@ else:
     dif0 = [positivo for itens in range(tamanho_df_pivot0)]
     Time2_Final['Diferenca_Placar'] = dif0
 
-Tabela_Final = pd.concat([Time1_Final, Time2_Final]).reset_index(drop=True)
 # Acrescentar o valor de preriodos posítivo e negativo
 tabela_times['Periodos_Positivos'] = [len(segmento),
                                       len(segmento_dois)]
@@ -519,11 +428,32 @@ tabela_times['Ataques/min'] = [contagem['Ataques/min'][0],
 tabela_times['Tempo_de_posse'] = [contagem['Tempo_de_posse'][0],
                                   contagem['Tempo_de_posse'][1]]
 
-aprendizado = aprendizado.append(tabela_times, ignore_index=True)
-##################################################################################################################
+# Concatenar todos os times
+Tabela_Final = pd.concat([Time1_Final, Time2_Final]).reset_index(drop=True)
+########################################################################################################
+# Análise Avançada parte 1
+criando_analise_avancada_geral(Time1_Final)
+criando_analise_avancada_geral(Time2_Final)
+# Análise Avançada parte 2
+frequencia_relativa(Time1_Final)
+frequencia_relativa(Time2_Final)
 
-'''# Análise Avançada
-analise = criando_analise_avancada_times(Tabela_Final)'''
-##################################################################################################################
+# Análise avançada do time
+criando_analise_avancada_time(tabela_times)
 
-aprendizado.to_csv('ex1.csv')
+##########################################################################################################
+grafico_Time1_Final = Time1_Final[['Nome', 'Pts_C', 'Pts_T','Pts_3_C', 'Pts_3_T', 'Pts_2_C', 'Pts_2_T', 'LL_C', 'LL_T',
+                                   'RO', 'RD', 'RT', 'AS', 'BR', 'TO', 'FC', 'FR', 'ER', 'EN']]
+
+dfi.export(grafico_Time1_Final, 'RELATORIO/teste5.png')
+
+grafico_Time2_Final = Time2_Final[['Nome', 'Pts_C', 'Pts_T','Pts_3_C', 'Pts_3_T', 'Pts_2_C', 'Pts_2_T', 'LL_C', 'LL_T',
+                                   'RO', 'RD', 'RT', 'AS', 'BR', 'TO', 'FC', 'FR', 'ER', 'EN']]
+dfi.export(grafico_Time2_Final, 'RELATORIO/teste6.png')
+
+
+
+
+
+
+
