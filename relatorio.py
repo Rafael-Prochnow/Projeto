@@ -1,13 +1,8 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import dataframe_image as dfi
-import pandas as pd
 from datetime import datetime
-import re
-from funcoes import siglas, limpeza_tempo, transformar_segundos, quartos_do_jogo, resultado_da_posse_de_bola,\
-    juntar_posses, acrescentar_indicadores, par_impar, periodo_potencial, identificardor_periodo_positivo, \
-    acrescentar_valores_gerais, criando_dataframe_times, criando_analise_avancada_geral, \
-    criando_analise_avancada_time, frequencia_relativa
+from funcoes import *
 
 
 # Informações para o relatório
@@ -18,7 +13,7 @@ temporada = f'20{k}'
 classificatoria = '1 Turno'
 ############################################################################################
 # Encontrar dadados
-df = pd.read_csv(fr'C:/Users/Elen- PC/PycharmProjects/untitled1/Dados01/temporada 20{k}' +
+df = pd.read_csv(fr'C:/Users/Elen- PC/Documents/banco_dados/NBB_jogada/temporada 20{k}' +
                  f'\\{arquivo_time}', index_col=0)
 
 # Separa os nomes dos times da casa e de fora
@@ -442,18 +437,15 @@ frequencia_relativa(Time2_Final)
 criando_analise_avancada_time(tabela_times)
 
 ##########################################################################################################
-grafico_Time1_Final = Time1_Final[['Nome', 'Pts_C', 'Pts_T','Pts_3_C', 'Pts_3_T', 'Pts_2_C', 'Pts_2_T', 'LL_C', 'LL_T',
+# Salvar a tabela para o gráfico
+grafico_Time1_Final = Time1_Final[['Nome', 'Pts_C', 'Pts_T', 'Pts_3_C', 'Pts_3_T', 'Pts_2_C', 'Pts_2_T', 'LL_C', 'LL_T',
                                    'RO', 'RD', 'RT', 'AS', 'BR', 'TO', 'FC', 'FR', 'ER', 'EN']]
 
 dfi.export(grafico_Time1_Final, 'RELATORIO/teste5.png')
 
-grafico_Time2_Final = Time2_Final[['Nome', 'Pts_C', 'Pts_T','Pts_3_C', 'Pts_3_T', 'Pts_2_C', 'Pts_2_T', 'LL_C', 'LL_T',
+grafico_Time2_Final = Time2_Final[['Nome', 'Pts_C', 'Pts_T', 'Pts_3_C', 'Pts_3_T', 'Pts_2_C', 'Pts_2_T', 'LL_C', 'LL_T',
                                    'RO', 'RD', 'RT', 'AS', 'BR', 'TO', 'FC', 'FR', 'ER', 'EN']]
 dfi.export(grafico_Time2_Final, 'RELATORIO/teste6.png')
 
-
-
-
-
-
-
+# precisa ver como fica os gráficos com as análises avançadas
+###########################################################################################################
